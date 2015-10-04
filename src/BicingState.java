@@ -1,18 +1,17 @@
 import IA.Bicing.Estaciones;
 
 public class BicingState {
+
+    public static final int SENSE_ESTACIO = -1;
+    public static final int ORIGEN  = 0; //Estacio d'origen
+    public static final int DESTI1  = 1; //Estacio de desti  (1)
+    public static final int NBICIS1 = 2; //Numero de bicis a (1)
+    public static final int DESTI2  = 3; //Estacio de desti  (2)
+    public static final int NBICIS2 = 4; //Numero de bicis a (2)
+
     public static Estaciones estaciones;
     public static int nFurgos;
-    public static final int DESTI1 = 1;
-    public static final int DESTI2 = 3;
     public int[][] furgos;
-    /*
-      [0] Estacio d'origen
-      [1] Estacio de desti  (1)
-      [2] Numero de bicis a (1)
-      [3] Estacio de desti  (2)
-      [4] Numero de bicis a (2)
-    */
 
     public BicingState(int nest, int nbic, int dem, int seed, int nf) {
         nFurgos = nf;
@@ -21,6 +20,18 @@ public class BicingState {
 
     public BicingState() {
         furgos = new int[nFurgos][5];
+    }
+
+    public final void solucioTrivial() {
+        for(int i = 0; i < nFurgos; ++i) {
+            furgos[i][ORIGEN] = furgos[i][DESTI1] = i;
+            furgos[i][DESTI2] = SENSE_ESTACIO;
+            furgos[i][NBICIS1] = furgos[i][NBICIS2] = 0;
+        }
+    }
+
+    public final void solucioElaborada() {
+        solucioTrivial(); //TODO Shhhhhh... tu no has vist res...
     }
 
     public BicingState copy() {
@@ -42,10 +53,6 @@ public class BicingState {
 
     public final void canviarDesti(int i, int desti, int estacio) {
         furgos[i][desti] = estacio;
-    }
-
-    public final void canviarNumBicis(int i, int desti, int nBicis) {
-        furgos[i][desti+1] = nBicis;
     }
 
     //Getters
