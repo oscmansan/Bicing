@@ -54,7 +54,6 @@ public class BicingHeuristicFunction implements HeuristicFunction {
         }
         //
 
-        //System.out.println(cost);
         return cost;
     }
 

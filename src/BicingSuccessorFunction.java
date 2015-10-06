@@ -8,10 +8,19 @@ import java.util.List;
 public class BicingSuccessorFunction implements SuccessorFunction {
 
     @Override
-    public List getSuccessors(Object aState) {
-        BicingState currentState = (BicingState) aState;
+    public List getSuccessors(Object aState)
+    {
+
         ArrayList<Successor> retVal = new ArrayList<>();
         BicingHeuristicFunction HF = new BicingHeuristicFunction();
+
+        BicingState currentState = (BicingState) aState;
+        System.out.println("INITIAL STATE: ************************");
+        double vv = HF.getHeuristicValue(currentState);
+        System.out.println("Coste(" + vv + ")");
+        System.out.println(currentState.toString());
+        System.out.println("***************************************");
+
 
         // Operador 1
         for (int i = 0; i < BicingState.stations.size(); ++i) {
@@ -39,9 +48,15 @@ public class BicingSuccessorFunction implements SuccessorFunction {
 
                     retVal.add(new Successor(S, newState));
                 }
-                if (currentState.getDest(i, BicingState.DEST2) != j) {
+            }
+
+            //Comença a -1, per contemplar el cas en que el desti2 es buit (NO_STATION)
+            for (int j = -1; j < BicingState.stations.size(); ++j)
+            {
+                if (currentState.getDest(i, BicingState.DEST2) != j)
+                {
                     BicingState newState = currentState.copy();
-                    newState.changeDest(i, BicingState.DEST2, j);
+                    newState.changeDest(i, BicingState.DEST2, (j == -1 ? BicingState.NO_STATION : j) );
 
                     double v = HF.getHeuristicValue(newState);
                     String S = BicingState.DEST_CHANGE + " van: " + i + " dest2: " + j + " Coste(" + v + ")";
@@ -104,11 +119,13 @@ public class BicingSuccessorFunction implements SuccessorFunction {
             }
         }
 
+        /*
         for(Successor suc : retVal)
         {
             System.out.println(suc.getAction());
             System.out.println(suc.getState().toString());
         }
+        */
 
         return retVal;
     }

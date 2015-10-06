@@ -1,6 +1,8 @@
 import IA.Bicing.Estacion;
 import IA.Bicing.Estaciones;
 
+import java.util.Random;
+
 public class BicingState {
 
     public static final int MAX_BIKES_PER_VAN = 30;
@@ -48,9 +50,10 @@ public class BicingState {
         for (int i = 0; i < nvans; ++i)
         {
             vans[i][ORIG] = i;
-            vans[i][DEST1] = i;
-            vans[i][DEST2] = NO_STATION;
-            vans[i][NBIKES1] = vans[i][NBIKES2] = 0;
+            vans[i][DEST1] = new Random().nextInt(stations.size());
+            vans[i][DEST2] = new Random().nextInt(stations.size());
+            vans[i][NBIKES1] = new Random().nextInt(getNumBikesOnStation(vans[i][ORIG]));
+            vans[i][NBIKES2] = Math.max(0, new Random().nextInt(getNumBikesOnStation(vans[i][ORIG]) - vans[i][NBIKES1]));
         }
     }
 
@@ -198,6 +201,7 @@ public class BicingState {
         {
             msg += "Station " + i + ":\t";
             msg += "  originalBikes=" + getNumBikesOnStation(i);
+            msg += ",\tdemandedBikes=" + getStationBikesDemand(i);
             msg += ",\tfinalBikes=" + (getNumBikesOnStation(i) + addedBikes[i] - takenBikes[i]);
             msg += ",\taddedBikes=" + addedBikes[i];
             msg += ",\ttakenBikes=" + takenBikes[i];
