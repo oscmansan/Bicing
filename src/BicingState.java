@@ -163,5 +163,13 @@ public class BicingState {
         vans[i][dest + 1] = n;
     }
 
+    public static int getDistance(int station1, int station2)
+    {
+        int x1 = BicingState.stations.get(station1).getCoordX();
+        int y1 = BicingState.stations.get(station1).getCoordY();
+        int x2 = BicingState.stations.get(station2).getCoordX();
+        int y2 = BicingState.stations.get(station2).getCoordY();
 
+        return Math.abs(x1-x2) + Math.abs(y1-y2);
+    }
 }
