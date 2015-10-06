@@ -12,9 +12,9 @@ import java.util.Properties;
 
 public class Main {
 
-    private static final int nest = 100;
-    private final static int nbic = 900;
-    private final static int nf = 50;
+    private static final int nest = 30;
+    private final static int nbic = 100;
+    private final static int nf = 5;
     private static final int dem = Estaciones.EQUILIBRIUM;
     private static final int seed = 0;
 
@@ -32,9 +32,10 @@ public class Main {
             Search search = new HillClimbingSearch();
             System.out.println();
             SearchAgent agent = new SearchAgent(problem, search);
+
             printActions(agent.getActions());
             printInstrumentation(agent.getInstrumentation());
-            if (search.getPathStates().size() > 0) {
+            /*if (search.getPathStates().size() > 0) {
                 BicingHeuristicFunction HF = new BicingHeuristicFunction();
                 BicingState initialState = (BicingState)problem.getInitialState();
                 System.out.println("*******************************************");
@@ -45,7 +46,7 @@ public class Main {
                 System.out.println("FINAL STATE:************************** Coste(" + HF.getHeuristicValue(finalState) + ")");
                 System.out.println(finalState.toString());
                 System.out.println("*******************************************");
-            }
+            }*/
         }catch (Exception e) {
             e.printStackTrace();
         }

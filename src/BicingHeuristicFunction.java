@@ -1,4 +1,3 @@
-import IA.Bicing.Estaciones;
 import aima.search.framework.HeuristicFunction;
 
 public class BicingHeuristicFunction implements HeuristicFunction {
@@ -28,8 +27,8 @@ public class BicingHeuristicFunction implements HeuristicFunction {
 
         for(int i = 0; i < BicingState.stations.size(); ++i)
         {
-            int demandedBikes = currentState.getStationBikesDemand(i);
-            int currentBikes = currentState.getNumBikesOnStation(i);
+            int demandedBikes = currentState.getDemand(i);
+            int currentBikes = currentState.getNumBikesNext(i);
 
             int aportation = Math.abs((currentBikes + (addedBikes[i] - takenBikes[i])) - demandedBikes);
             cost += aportation;
