@@ -2,50 +2,50 @@ import IA.Bicing.Estaciones;
 
 public class BicingState {
 
-    public static final int SENSE_ESTACIO = -1;
-    public static final int ORIGEN  = 0; // Estacio d'origen
-    public static final int DESTI1  = 1; // Estacio de desti  (1)
-    public static final int NBICIS1 = 2; // Numero de bicis a (1)
-    public static final int DESTI2  = 3; // Estacio de desti  (2)
-    public static final int NBICIS2 = 4; // Numero de bicis a (2)
+    public static final int NO_STATION = -1;
+    public static final int ORIG = 0; // Estacio d'origen
+    public static final int DEST1 = 1; // Estacio de desti  (1)
+    public static final int NBIKES1 = 2; // Numero de bicis a (1)
+    public static final int DEST2 = 3; // Estacio de desti  (2)
+    public static final int NBIKES2 = 4; // Numero de bicis a (2)
 
-    public static Estaciones estacions;
-    public static int nfurgos;
+    public static Estaciones stations;
+    public static int nvans;
 
-    public int[][] furgos;
+    public int[][] vans;
 
     /**
      * Constructora per defecte
      */
     public BicingState() {
-        furgos = new int[nfurgos][5];
+        vans = new int[nvans][5];
     }
 
     /**
      * Constructora amb parametres i una solucio inicial
      * @param nest  numero d'estacions
      * @param nbic  numero de bicis
-     * @param nf    numero de furgonetes
+     * @param nv    numero de furgonetes
      * @param dem   tipus d'escenari (equilibrat/hora punta)
      * @param seed  llavor pel generador de numeros aleatoris
      */
-    public BicingState(int nest, int nbic, int nf, int dem, int seed) {
-        nfurgos = nf;
-        estacions = new Estaciones(nest, nbic, dem, seed);
-        furgos = new int[nfurgos][5];
-        solucioTrivial();
+    public BicingState(int nest, int nbic, int nv, int dem, int seed) {
+        nvans = nv;
+        stations = new Estaciones(nest, nbic, dem, seed);
+        vans = new int[nvans][5];
+        trivialSolution();
     }
 
-    private final void solucioTrivial() {
-        for(int i = 0; i < nfurgos; ++i) {
-            furgos[i][ORIGEN] = furgos[i][DESTI1] = i;
-            furgos[i][DESTI2] = SENSE_ESTACIO;
-            furgos[i][NBICIS1] = furgos[i][NBICIS2] = 0;
+    private final void trivialSolution() {
+        for(int i = 0; i < nvans; ++i) {
+            vans[i][ORIG] = vans[i][DEST1] = i;
+            vans[i][DEST2] = NO_STATION;
+            vans[i][NBIKES1] = vans[i][NBIKES2] = 0;
         }
     }
 
-    private final void solucioElaborada() {
-        solucioTrivial(); //TODO Shhhhhh... tu no has vist res...
+    private final void complexSolution() {
+        trivialSolution(); //TODO Shhhhhh... tu no has vist res...
     }
 
     /**
@@ -54,12 +54,12 @@ public class BicingState {
      */
     public BicingState copy() {
         BicingState bs = new BicingState();
-        for (int i = 0; i < nfurgos; ++i) {
-            bs.furgos[i][ORIGEN] = furgos[i][ORIGEN];
-            bs.furgos[i][DESTI1] = furgos[i][DESTI1];
-            bs.furgos[i][NBICIS1] = furgos[i][NBICIS1];
-            bs.furgos[i][DESTI2] = furgos[i][DESTI2];
-            bs.furgos[i][NBICIS2] = furgos[i][NBICIS2];
+        for (int i = 0; i < nvans; ++i) {
+            bs.vans[i][ORIG] = vans[i][ORIG];
+            bs.vans[i][DEST1] = vans[i][DEST1];
+            bs.vans[i][NBIKES1] = vans[i][NBIKES1];
+            bs.vans[i][DEST2] = vans[i][DEST2];
+            bs.vans[i][NBIKES2] = vans[i][NBIKES2];
         }
         return bs;
     }
@@ -72,28 +72,28 @@ public class BicingState {
      * @param i     l'index de la furgoneta
      * @return      l'estacio d'origen de la furgoneta
      */
-    public final int getOrigen(int i) {
-        return furgos[i][ORIGEN];
+    public final int getOrig(int i) {
+        return vans[i][ORIG];
     }
 
     /**
      * Retorna l'estacio de desti (primer o segon) de la furgoneta i
      * @param i     l'index de la furgoneta
-     * @param desti indica primer o segon desti
+     * @param dest indica primer o segon desti
      * @return      l'estacio de desti (primer o segon) de la furgoneta
      */
-    public final int getDesti(int i, int desti) {
-        return furgos[i][desti];
+    public final int getDest(int i, int dest) {
+        return vans[i][dest];
     }
 
     /**
      * Retorna el numero de bicis que la furgoneta i deixa al desti
      * @param i     l'index de la furgoneta
-     * @param desti indica primer o segon desti
+     * @param dest indica primer o segon desti
      * @return      el numero de bicis que la furgoneta deixa al desti (primer o segon)
      */
-    public final int getNumBicis(int i, int desti) {
-        return furgos[i][desti+1];
+    public final int getNumBikes(int i, int dest) {
+        return vans[i][dest+1];
     }
 
 
@@ -101,31 +101,39 @@ public class BicingState {
 
     /**
      * Canvia l'estacio d'origen de la furgoneta i
-     * @param i         l'index de la furgoneta
-     * @param estacio   la nova estacio d'origen
+     * @param station1   l'index de la furgoneta
+     * @param station2   la nova estacio d'origen
      */
-    public final void canviarOrigen(int i, int estacio) {
-        furgos[i][0] = estacio;
+    public final void swapOrig(int station1, int station2) {
+        int vanOnStation1, vanOnStation2, orig1, orig2;
+        vanOnStation1 = vanOnStation2 = -1;
+        for (int i = 0; i < vans.length; ++i) {
+            if (getOrig(i) == station1) vanOnStation1 = i;
+            else if (getOrig(i) == station2) vanOnStation2 = i;
+        }
+
+        if (vanOnStation1 != -1) vans[vanOnStation1][ORIG] = station2;
+        if (vanOnStation2 != -1) vans[vanOnStation2][ORIG] = station1;
     }
 
     /**
      * Canvia l'estacio de desti de la furgoneta i
      * @param i         l'index de la furgoneta
-     * @param desti     indica primer o segon desti
-     * @param estacio   la nova estacio de desti
+     * @param dest     indica primer o segon desti
+     * @param station   la nova estacio de desti
      */
-    public final void canviarDesti(int i, int desti, int estacio) {
-        furgos[i][desti] = estacio;
+    public final void changeDest(int i, int dest, int station) {
+        vans[i][dest] = station;
     }
 
     /**
      * Canvia el numero de bicis que la furgoneta i deixa al desti
      * @param i     l'index de la furgoneta
-     * @param desti indica primer o segon desti
+     * @param dest indica primer o segon desti
      * @param n     el numero de bicis que la furgoneta deixa al desti
      */
-    public final void canviarNumBicis(int i, int desti, int n) {
-        furgos[i][desti+1] = n;
+    public final void changeNumBikes(int i, int dest, int n) {
+        vans[i][dest+1] = n;
     }
 
 }
