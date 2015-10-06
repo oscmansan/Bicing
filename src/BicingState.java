@@ -2,6 +2,10 @@ import IA.Bicing.Estaciones;
 
 public class BicingState {
 
+    public static final String ORIG_SWAP      = "Origin swap";
+    public static final String DEST_CHANGE    = "Destination change";
+    public static final String NBIKES_CHANGE  = "Num bikes change";
+
     public static final int NO_STATION = -1;
     public static final int ORIG = 0; // Estacio d'origen
     public static final int DEST1 = 1; // Estacio de desti  (1)
