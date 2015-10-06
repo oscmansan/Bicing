@@ -53,7 +53,7 @@ public class BicingState {
             vans[i][DEST1] = new Random().nextInt(stations.size());
             vans[i][DEST2] = new Random().nextInt(stations.size());
             vans[i][NBIKES1] = new Random().nextInt(getNumBikesOnStation(vans[i][ORIG]));
-            vans[i][NBIKES2] = Math.max(0, new Random().nextInt(getNumBikesOnStation(vans[i][ORIG]) - vans[i][NBIKES1]));
+            vans[i][NBIKES2] = Math.max(0, new Random().nextInt(getNumBikesOnStation(vans[i][ORIG] - vans[i][NBIKES1])));
         }
     }
 

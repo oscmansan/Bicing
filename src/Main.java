@@ -12,9 +12,9 @@ import java.util.Properties;
 
 public class Main {
 
-    private static final int nest = 30;
-    private final static int nbic = 150;
-    private final static int nf = 15;
+    private static final int nest = 100;
+    private final static int nbic = 900;
+    private final static int nf = 50;
     private static final int dem = Estaciones.EQUILIBRIUM;
     private static final int seed = 0;
 
