@@ -45,8 +45,10 @@ public class BicingState {
     }
 
     private final void trivialSolution() {
-        for (int i = 0; i < nvans; ++i) {
-            vans[i][ORIG] = vans[i][DEST1] = i;
+        for (int i = 0; i < nvans; ++i)
+        {
+            vans[i][ORIG] = i;
+            vans[i][DEST1] = i;
             vans[i][DEST2] = NO_STATION;
             vans[i][NBIKES1] = vans[i][NBIKES2] = 0;
         }
@@ -105,7 +107,7 @@ public class BicingState {
      * @return el numero de bicis que la furgoneta deixa al desti (primer o segon)
      */
     public final int getNumBikes(int i, int dest) {
-        return vans[i][dest + 1];
+        return getDest(i, dest) == NO_STATION ? 0 : vans[i][dest + 1];
     }
 
     public final int getNumBikesOnStation(int station) {
@@ -172,4 +174,62 @@ public class BicingState {
 
         return Math.abs(x1-x2) + Math.abs(y1-y2);
     }
+
+    public final String toString()
+    {
+        String msg = "\n";
+        int[] addedBikes = new int[BicingState.stations.size()];
+        int[] takenBikes = new int[BicingState.stations.size()];
+        for (int i = 0; i < BicingState.nvans; ++i) {
+            if(getDest(i, BicingState.DEST1)  != BicingState.NO_STATION)
+            {
+                addedBikes[getDest(i, BicingState.DEST1)] += getNumBikes(i, BicingState.DEST1);
+            }
+            if(getDest(i, BicingState.DEST2)  != BicingState.NO_STATION)
+            {
+                addedBikes[getDest(i, BicingState.DEST2)] += getNumBikes(i, BicingState.DEST2);
+            }
+
+            takenBikes[getOrig(i)] += getNumBikes(i, BicingState.DEST1) + getNumBikes(i, BicingState.DEST2);
+        }
+
+        msg += "Stations: \t\t\t Vans: \n";
+        for(int i = 0; i < stations.size(); ++i)
+        {
+            msg += "Station " + i + ":\t";
+            msg += "  originalBikes=" + getNumBikesOnStation(i);
+            msg += ",\tfinalBikes=" + (getNumBikesOnStation(i) + addedBikes[i] - takenBikes[i]);
+            msg += ",\taddedBikes=" + addedBikes[i];
+            msg += ",\ttakenBikes=" + takenBikes[i];
+            //msg += "\n";
+
+            if (i < BicingState.nvans) {
+                msg += "\t\t\t";
+                int vansBikes1 = getNumBikes(i, BicingState.DEST1) +
+                        getNumBikes(i, BicingState.DEST2);
+
+                int dest1 = getDest(i, BicingState.DEST1), dest2 = getDest(i, BicingState.DEST2);
+                double distOrigDest1 = (double) BicingState.getDistance(getOrig(i), dest1);
+
+                if (getDest(i, BicingState.DEST2) != BicingState.NO_STATION) {
+                    int vansBikes2 = getNumBikes(i, BicingState.DEST2);
+                    double distDest1Dest2 = (double) BicingState.getDistance(dest1, dest2);
+                }
+
+                msg += "Van " + i + ":\t ";
+                msg += "  orig=" + getOrig(i) + "(" + getNumBikesOnStation(getOrig(i)) + ")";
+                msg += ",\tdest1=" + getDest(i, DEST1) + "(" + getNumBikes(i, DEST1) + ")";
+                msg += ",\tdest2=" + getDest(i, DEST2) + "(" + getNumBikes(i, DEST2) + ")";
+                msg += "\n";
+            } else {
+                msg += "\n";
+            }
+        }
+
+        msg += ":::::::::::::::::::::::::::::\n\n";
+
+        return msg;
+    }
+
+
 }
