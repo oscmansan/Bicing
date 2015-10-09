@@ -72,7 +72,7 @@ public class BicingSuccessorFunction implements SuccessorFunction {
 
             int vanOrig = currentState.getOrig(i);
 
-            //MALAMENT
+            //MALAME
             int maxBikes = Math.min(BicingState.MAX_BIKES_PER_VAN, currentState.getNumBikesNext(vanOrig));
 
             if (bikesToDest1 + bikesToDest2 < maxBikes) {
