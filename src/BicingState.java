@@ -1,4 +1,5 @@
 import IA.Bicing.Estaciones;
+import aima.search.framework.Successor;
 
 import java.util.Random;
 
@@ -176,16 +177,29 @@ public class BicingState {
     }
 
     /**
-     * Changes the num of bikes the van leaves at the destination
+     * Adds 1 bike to the destination dest of the van i
      *
-     * @param i    the index of the van
-     * @param dest indicates first or second destination
-     * @param n    the num of bikes the van leaves at the destination
+     * @param i       the index of the van
+     * @param dest    indicates first or second destination
      */
-    public final void changeNumBikes(int i, int dest, int n) {
-        vans[i][dest + 1] = n;
+    public final void addBike(int i, int dest)
+    {
+        changeNumBikes(i, dest, getNumBikes(i, dest) + 1);
     }
 
+    /**
+     * Substracts 1 bike to the destination dest of the van i
+     *
+     * @param i       the index of the van
+     * @param dest    indicates first or second destination
+     */
+    public final void substractBike(int i, int dest)
+    {
+        changeNumBikes(i, dest, getNumBikes(i, dest) - 1);
+    }
+
+
+    ////////////
 
     // Auxiliary functions
 
@@ -204,6 +218,19 @@ public class BicingState {
 
         return Math.abs(x1 - x2) + Math.abs(y1 - y2);
     }
+
+    /**
+     * Changes the num of bikes the van leaves at the destination
+     *
+     * @param i    the index of the van
+     * @param dest indicates first or second destination
+     * @param n    the num of bikes the van leaves at the destination
+     */
+    private final void changeNumBikes(int i, int dest, int n) {
+        vans[i][dest + 1] = n;
+    }
+
+
 
     public final String toString() {
         String str = "\n";
