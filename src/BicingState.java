@@ -230,7 +230,15 @@ public class BicingState {
         vans[i][dest + 1] = n;
     }
 
-
+    /**
+     * Returns the maximum number of bikes the van can take from the station
+     * @param station   the index of the station
+     * @return          the maximum number of bikes the van can take from the station
+     */
+    public final int getAvailableBikes(int station) {
+        //System.out.println("next: " + getNumBikesNext(station) + "  useless: " + getUselessBikes(station));
+        return Math.min(Math.max(0,getNumBikesNext(station)),getUselessBikes(station));
+    }
 
     public final String toString() {
         String str = "\n";

@@ -71,9 +71,7 @@ public class BicingSuccessorFunction implements SuccessorFunction {
             int bikesToDest2 = currentState.getNumBikes(i, BicingState.DEST2);
 
             int vanOrig = currentState.getOrig(i);
-
-            //MALAME
-            int maxBikes = Math.min(BicingState.MAX_BIKES_PER_VAN, currentState.getNumBikesNext(vanOrig));
+            int maxBikes = currentState.getAvailableBikes(vanOrig);
 
             if (bikesToDest1 + bikesToDest2 < maxBikes) {
                 // Portem una bici mes al desti1 (DEST1)
@@ -121,14 +119,6 @@ public class BicingSuccessorFunction implements SuccessorFunction {
                 }
             }
         }
-
-        /*
-        for(Successor suc : retVal)
-        {
-            System.out.println(suc.getAction());
-            System.out.println(suc.getState().toString());
-        }
-        */
 
         return retVal;
     }

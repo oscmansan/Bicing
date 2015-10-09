@@ -20,8 +20,8 @@ public class Main {
 
     public static void main(String args[]) {
         BicingState BS = new BicingState(nest, nbic, nf, dem, seed);
-        BicingHillClimbingSearch(BS);
-        //BicingSimulatedAnnealingSearch(BS);
+        //BicingHillClimbingSearch(BS);
+        BicingSimulatedAnnealingSearch(BS);
     }
 
     private static void BicingHillClimbingSearch(BicingState BS)
@@ -56,7 +56,7 @@ public class Main {
 
         System.out.println("\nBicing SimulatedAnnealing  -->");
         try {
-            Problem problem =  new Problem(BS,new BicingSuccessorFunction(), new ProbTSPGoalTest(), new BicingHeuristicFunction());
+            Problem problem =  new Problem(BS,new BicingSuccessorFunctionSA(), new ProbTSPGoalTest(), new BicingHeuristicFunction());
             Search search =  new SimulatedAnnealingSearch(2000,100,5,0.001);
             SearchAgent agent = new SearchAgent(problem,search);
             System.out.println();
