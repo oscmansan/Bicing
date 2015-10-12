@@ -113,6 +113,16 @@ public class BicingState {
     }
 
     /**
+     * Returns the number of bikes the van takes from the origin
+     *
+     * @param i     the index of the van
+     * @return      the numb of bikes the van takes from the origin
+     */
+    public final int getTakenBikes(int i) {
+        return getNumBikes(i, DEST1) + getNumBikes(i,DEST2);
+    }
+
+    /**
      * Returns the number of bikes there will be in the station in the next hour
      *
      * @param station the index of the considered station
@@ -161,8 +171,10 @@ public class BicingState {
             else if (getOrig(i) == station2) vanOnStation2 = i;
         }
 
-        if (vanOnStation1 != -1) vans[vanOnStation1][ORIG] = station2;
-        if (vanOnStation2 != -1) vans[vanOnStation2][ORIG] = station1;
+        if (vanOnStation1 != -1 && getTakenBikes(vanOnStation1) <= getAvailableBikes(station2))
+            vans[vanOnStation1][ORIG] = station2;
+        if (vanOnStation2 != -1 && getTakenBikes(vanOnStation2) <= getAvailableBikes(station1))
+            vans[vanOnStation2][ORIG] = station1;
     }
 
     /**
@@ -199,8 +211,6 @@ public class BicingState {
     }
 
 
-    ////////////
-
     // Auxiliary functions
 
     /**
@@ -226,7 +236,7 @@ public class BicingState {
      * @param dest indicates first or second destination
      * @param n    the num of bikes the van leaves at the destination
      */
-    private final void changeNumBikes(int i, int dest, int n) {
+    public final void changeNumBikes(int i, int dest, int n) {
         vans[i][dest + 1] = n;
     }
 

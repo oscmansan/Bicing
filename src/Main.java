@@ -20,8 +20,8 @@ public class Main {
 
     public static void main(String args[]) {
         BicingState BS = new BicingState(nest, nbic, nf, dem, seed);
-        //BicingHillClimbingSearch(BS);
-        BicingSimulatedAnnealingSearch(BS);
+        BicingHillClimbingSearch(BS);
+        //BicingSimulatedAnnealingSearch(BS);
     }
 
     private static void BicingHillClimbingSearch(BicingState BS)
