@@ -52,8 +52,8 @@ public class BicingState {
             vans[i][ORIG] = i;
             vans[i][DEST1] = new Random().nextInt(stations.size());
             vans[i][DEST2] = new Random().nextInt(stations.size());
-            vans[i][NBIKES1] = new Random().nextInt(getAvailableBikes(vans[i][ORIG]) + 1);
-            int n = getAvailableBikes(vans[i][ORIG]) - vans[i][NBIKES1];
+            vans[i][NBIKES1] = new Random().nextInt(Math.min(MAX_BIKES_PER_VAN, getAvailableBikes(vans[i][ORIG])+1));
+            int n = Math.min(MAX_BIKES_PER_VAN, getAvailableBikes(vans[i][ORIG])) - vans[i][NBIKES1];
             vans[i][NBIKES2] = (n <= 0) ? 0 : new Random().nextInt(n);
         }
     }
@@ -251,7 +251,7 @@ public class BicingState {
      * @return          the maximum number of bikes the van can take from the station
      */
     public final int getAvailableBikes(int station) {
-        //System.out.println("next: " + getNumBikesNext(station) + "  useless: " + getUselessBikes(station));
+        // System.out.println("next: " + getNumBikesNext(station) + " demand: " + getDemand(station) + "  useless: " + getUselessBikes(station));
         return Math.min(Math.max(0,getNumBikesNext(station) - getDemand(station)),getUselessBikes(station));
     }
 

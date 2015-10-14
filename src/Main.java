@@ -35,18 +35,6 @@ public class Main {
 
             printActions(agent.getActions());
             printInstrumentation(agent.getInstrumentation());
-            /*if (search.getPathStates().size() > 0) {
-                BicingHeuristicFunction HF = new BicingHeuristicFunction();
-                BicingState initialState = (BicingState)problem.getInitialState();
-                System.out.println("*******************************************");
-                System.out.println("INITIAL STATE:************************** Coste(" + HF.getHeuristicValue(initialState) + ")");
-                System.out.println(initialState.toString());
-                System.out.println("*******************************************");
-                BicingState finalState = (BicingState)search.getPathStates().get(search.getPathStates().size() - 1);
-                System.out.println("FINAL STATE:************************** Coste(" + HF.getHeuristicValue(finalState) + ")");
-                System.out.println(finalState.toString());
-                System.out.println("*******************************************");
-            }*/
         }catch (Exception e) {
             e.printStackTrace();
         }

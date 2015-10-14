@@ -8,8 +8,7 @@ import java.util.Random;
 public class BicingSuccessorFunctionSA implements SuccessorFunction {
 
     @Override
-    public List getSuccessors(Object aState)
-    {
+    public List getSuccessors(Object aState) {
         int E = BicingState.stations.size();
         int F = BicingState.nvans;
         int probOp1 = E * (E - 1);
@@ -118,17 +117,15 @@ public class BicingSuccessorFunctionSA implements SuccessorFunction {
 
             //Operador 4
             int van, nBikes;
-            do
-            {
+            do {
                 van = new Random().nextInt(F);
-                nBikes = currentState.getAvailableBikes(currentState.getOrig(van));
+                nBikes = Math.min(BicingState.MAX_BIKES_PER_VAN, currentState.getAvailableBikes(currentState.getOrig(van)));
             }
-            while( (currentState.getDest(van,BicingState.DEST2) == BicingState.NO_STATION
-                      && currentState.getNumBikes(van, BicingState.DEST1) == nBikes       )
-                   || nBikes <= 0);
+            while ((currentState.getDest(van, BicingState.DEST2) == BicingState.NO_STATION
+                    && currentState.getNumBikes(van, BicingState.DEST1) == nBikes)
+                    || nBikes <= 0);
 
-            if (currentState.getDest(van,BicingState.DEST2) != BicingState.NO_STATION)
-            {
+            if (currentState.getDest(van, BicingState.DEST2) != BicingState.NO_STATION) {
                 int bikesToDest1 = new Random().nextInt(nBikes + 1);
                 int bikesToDest2 = nBikes - bikesToDest1;
 
@@ -139,14 +136,12 @@ public class BicingSuccessorFunctionSA implements SuccessorFunction {
                 double v = HF.getHeuristicValue(newState);
                 String S = "van " + van + " bikes to DEST1 (" + bikesToDest1 + ") bikes to DEST2 (" + bikesToDest2 + ")" + " Cost(" + v + ")";
                 retVal.add(new Successor(S, newState));
-            }
-            else if (currentState.getNumBikes(van, BicingState.DEST1) != nBikes)
-            {
+            } else if (currentState.getNumBikes(van, BicingState.DEST1) != nBikes) {
                 BicingState newState = currentState.copy();
                 newState.changeNumBikes(van, BicingState.DEST1, nBikes);
 
-                int bikesToDest1 = newState.getNumBikes(van,BicingState.DEST1);
-                int bikesToDest2 = newState.getNumBikes(van,BicingState.DEST2);
+                int bikesToDest1 = newState.getNumBikes(van, BicingState.DEST1);
+                int bikesToDest2 = newState.getNumBikes(van, BicingState.DEST2);
                 double v = HF.getHeuristicValue(newState);
                 String S = "van " + van + " bikes to DEST1 (" + bikesToDest1 + ") bikes to DEST2 (" + bikesToDest2 + ")" + " Cost(" + v + ")";
                 retVal.add(new Successor(S, newState));
