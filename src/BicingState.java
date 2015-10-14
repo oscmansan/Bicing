@@ -280,7 +280,7 @@ public class BicingState {
         str += String.format("| station | original | demand | final | added | taken | %n");
         str += String.format("+---------+----------+--------+-------+-------+-------+ %n");
 
-        String leftAlignFormat = "| %7d | %8d | %6d | %5d | %5d | %5d |   Cost(%f) %n";
+        String leftAlignFormat = "| %7d | %8d | %6d | %5d | %5d | %5d |   Cost(%f)\t%s %n";
         for (int i = 0; i < stations.size(); ++i) {
             str += String.format(
                     leftAlignFormat,
@@ -290,7 +290,8 @@ public class BicingState {
                     (getNumBikesNext(i) + addedBikes[i] - takenBikes[i]),
                     addedBikes[i],
                     takenBikes[i],
-                    HF.getHeuristicValueForStation(this, i)
+                    HF.getHeuristicValueForStation(this, i),
+                    (addedBikes[i] == 0 && takenBikes[i] == 0 ? "**UNTOUCHED STATION" : "")
             );
         }
         str += String.format("+---------+----------+--------+-------+-------+-------+%n");
@@ -302,7 +303,7 @@ public class BicingState {
         str += String.format("| van | orig |   dest1  |   dest2   | %n");
         str += String.format("+-----+------+----------+-----------+ %n");
 
-        leftAlignFormat = "| %3d | %4d | %5s\t| %5s   \t|    Cost(%f) %n";
+        leftAlignFormat = "| %3d | %4d | %5s\t| %5s   \t|    Cost(%f)  %n";
         for (int i = 0; i < nvans; ++i) {
             str += String.format(
                     leftAlignFormat,
