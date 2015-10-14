@@ -20,8 +20,8 @@ public class Main {
 
     public static void main(String args[]) {
         BicingState BS = new BicingState(nest, nbic, nf, dem, seed);
-        BicingHillClimbingSearch(BS);
-        //BicingSimulatedAnnealingSearch(BS);
+        //BicingHillClimbingSearch(BS);
+        BicingSimulatedAnnealingSearch(BS);
     }
 
     private static void BicingHillClimbingSearch(BicingState BS)
@@ -59,9 +59,9 @@ public class Main {
             Problem problem =  new Problem(BS,new BicingSuccessorFunctionSA(), new ProbTSPGoalTest(), new BicingHeuristicFunction());
             Search search =  new SimulatedAnnealingSearch(2000,100,5,0.001);
             SearchAgent agent = new SearchAgent(problem,search);
-            System.out.println();
-            printActions(agent.getActions());
-            printInstrumentation(agent.getInstrumentation());
+            //System.out.println();
+            //printActions(agent.getActions());  //ES RALLA
+            //printInstrumentation(agent.getInstrumentation()); //ES RALLA (?)
         } catch (Exception e) {
             e.printStackTrace();
         }
