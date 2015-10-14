@@ -17,9 +17,9 @@ public class BicingSuccessorFunction implements SuccessorFunction {
         double vv = HF.getHeuristicValue(currentState);
         System.out.println("Cost(" + vv + ") --->");
         System.out.println(currentState.toString());
-        System.out.println("########################################################\n");
+        //System.out.println("########################################################\n");
 
-        // Operator 1
+        // Operator 1 (swap origins)
         for (int i = 0; i < BicingState.stations.size(); ++i) {
             for (int j = 0; j < BicingState.stations.size(); ++j) {
                 if (i == j) continue;
@@ -27,7 +27,7 @@ public class BicingSuccessorFunction implements SuccessorFunction {
                 if (newState.swapOrig(i, j)) {    // Could not change the state
                     double v = HF.getHeuristicValue(newState);
                     String S = BicingState.ORIG_SWAP + " (" + i + "," + j + ") Cost(" + v + ")";
-
+                    //System.out.println(S);
                     retVal.add(new Successor(S, newState));
                 }
             }

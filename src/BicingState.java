@@ -1,4 +1,5 @@
 import IA.Bicing.Estaciones;
+import aima.search.framework.HeuristicFunction;
 import aima.search.framework.Successor;
 
 import java.util.Random;
@@ -51,8 +52,9 @@ public class BicingState {
             vans[i][ORIG] = i;
             vans[i][DEST1] = new Random().nextInt(stations.size());
             vans[i][DEST2] = new Random().nextInt(stations.size());
-            vans[i][NBIKES1] = new Random().nextInt(getNumBikesNext(vans[i][ORIG]));
-            vans[i][NBIKES2] = Math.max(0, new Random().nextInt(getNumBikesNext(vans[i][ORIG]) - vans[i][NBIKES1]));
+            vans[i][NBIKES1] = new Random().nextInt(getAvailableBikes(vans[i][ORIG]) + 1);
+            int n = getAvailableBikes(vans[i][ORIG]) - vans[i][NBIKES1];
+            vans[i][NBIKES2] = (n <= 0) ? 0 : new Random().nextInt(n);
         }
     }
 
@@ -166,7 +168,7 @@ public class BicingState {
     public final boolean swapOrig(int station1, int station2) {
         int vanOnStation1, vanOnStation2;
         vanOnStation1 = vanOnStation2 = -1;
-        for (int i = 0; i < vans.length; ++i) {
+        for (int i = 0; i < nvans; ++i) {
             if (getOrig(i) == station1) vanOnStation1 = i;
             else if (getOrig(i) == station2) vanOnStation2 = i;
         }
@@ -253,7 +255,10 @@ public class BicingState {
         return Math.min(Math.max(0,getNumBikesNext(station) - getDemand(station)),getUselessBikes(station));
     }
 
-    public final String toString() {
+    public final String toString()
+    {
+        BicingHeuristicFunction HF = new BicingHeuristicFunction();
+
         String str = "\n";
         // Stores the number of bikes added to each station
         int[] addedBikes = new int[BicingState.stations.size()];
@@ -275,7 +280,7 @@ public class BicingState {
         str += String.format("| station | original | demand | final | added | taken | %n");
         str += String.format("+---------+----------+--------+-------+-------+-------+ %n");
 
-        String leftAlignFormat = "| %7d | %8d | %6d | %5d | %5d | %5d | %n";
+        String leftAlignFormat = "| %7d | %8d | %6d | %5d | %5d | %5d |   Cost(%f) %n";
         for (int i = 0; i < stations.size(); ++i) {
             str += String.format(
                     leftAlignFormat,
@@ -284,7 +289,8 @@ public class BicingState {
                     getDemand(i),
                     (getNumBikesNext(i) + addedBikes[i] - takenBikes[i]),
                     addedBikes[i],
-                    takenBikes[i]
+                    takenBikes[i],
+                    HF.getHeuristicValueForStation(this, i)
             );
         }
         str += String.format("+---------+----------+--------+-------+-------+-------+%n");
@@ -292,21 +298,22 @@ public class BicingState {
         str += String.format("+----------------------------+ %n");
         str += String.format("| %10s %-15s | %n", " ", "VANS");
 
-        str += String.format("+-----+------+-------+-------+ %n");
-        str += String.format("| van | orig | dest1 | dest2 | %n");
-        str += String.format("+-----+------+-------+-------+ %n");
+        str += String.format("+-----+------+----------+-----------+ %n");
+        str += String.format("| van | orig |   dest1  |   dest2   | %n");
+        str += String.format("+-----+------+----------+-----------+ %n");
 
-        leftAlignFormat = "| %3d | %4d | %5s | %5s | %n";
+        leftAlignFormat = "| %3d | %4d | %5s\t| %5s   \t|    Cost(%f) %n";
         for (int i = 0; i < nvans; ++i) {
             str += String.format(
                     leftAlignFormat,
                     i,
                     getOrig(i),
-                    getDest(i, DEST1) + "(" + getNumBikes(i, DEST1) + ")",
-                    getDest(i, DEST2) + "(" + getNumBikes(i, DEST2) + ")"
+                    getDest(i, DEST1) + "(" + getNumBikes(i, DEST1) + "b)",
+                    getDest(i, DEST2) + "(" + getNumBikes(i, DEST2) + "b)",
+                    HF.getHeuristicValueForVanTravel(this, i)
             );
         }
-        str += String.format("+-----+------+-------+-------+ %n");
+        str += String.format("+-----+------+----------+-----------+ %n");
 
         return str;
     }

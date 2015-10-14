@@ -129,7 +129,7 @@ public class BicingSuccessorFunctionSA implements SuccessorFunction {
 
             if (currentState.getDest(van,BicingState.DEST2) != BicingState.NO_STATION)
             {
-                int bikesToDest1 = new Random().nextInt(nBikes);
+                int bikesToDest1 = new Random().nextInt(nBikes + 1);
                 int bikesToDest2 = nBikes - bikesToDest1;
 
                 BicingState newState = currentState.copy();
