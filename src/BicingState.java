@@ -163,7 +163,7 @@ public class BicingState {
      * @param station1 the index of the first station
      * @param station2 the index of the second station
      */
-    public final void swapOrig(int station1, int station2) {
+    public final boolean swapOrig(int station1, int station2) {
         int vanOnStation1, vanOnStation2;
         vanOnStation1 = vanOnStation2 = -1;
         for (int i = 0; i < vans.length; ++i) {
@@ -171,10 +171,13 @@ public class BicingState {
             else if (getOrig(i) == station2) vanOnStation2 = i;
         }
 
-        if (vanOnStation1 != -1 && getTakenBikes(vanOnStation1) <= getAvailableBikes(station2))
+        if (vanOnStation1 != -1 && getTakenBikes(vanOnStation1) <= getAvailableBikes(station2)
+            && vanOnStation2 != -1 && getTakenBikes(vanOnStation2) <= getAvailableBikes(station1)) {
             vans[vanOnStation1][ORIG] = station2;
-        if (vanOnStation2 != -1 && getTakenBikes(vanOnStation2) <= getAvailableBikes(station1))
             vans[vanOnStation2][ORIG] = station1;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -247,7 +250,7 @@ public class BicingState {
      */
     public final int getAvailableBikes(int station) {
         //System.out.println("next: " + getNumBikesNext(station) + "  useless: " + getUselessBikes(station));
-        return Math.min(Math.max(0,getNumBikesNext(station)),getUselessBikes(station));
+        return Math.min(Math.max(0,getNumBikesNext(station) - getDemand(station)),getUselessBikes(station));
     }
 
     public final String toString() {

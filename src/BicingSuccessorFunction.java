@@ -24,12 +24,12 @@ public class BicingSuccessorFunction implements SuccessorFunction {
             for (int j = 0; j < BicingState.stations.size(); ++j) {
                 if (i == j) continue;
                 BicingState newState = currentState.copy();
-                newState.swapOrig(i, j);    // Could not change the state
+                if (newState.swapOrig(i, j)) {    // Could not change the state
+                    double v = HF.getHeuristicValue(newState);
+                    String S = BicingState.ORIG_SWAP + " (" + i + "," + j + ") Cost(" + v + ")";
 
-                double v = HF.getHeuristicValue(newState);
-                String S = BicingState.ORIG_SWAP + " (" + i + "," + j + ") Cost(" + v + ")";
-
-                retVal.add(new Successor(S, newState));
+                    retVal.add(new Successor(S, newState));
+                }
             }
         }
 
@@ -61,7 +61,7 @@ public class BicingSuccessorFunction implements SuccessorFunction {
             }
         }
 
-        // Operator 3
+        /*// Operator 3
         // Here we change the num of bikes the vans leave at destination
         for (int i = 0; i < BicingState.nvans; ++i) {
             int bikesToDest1 = currentState.getNumBikes(i, BicingState.DEST1);
@@ -115,7 +115,7 @@ public class BicingSuccessorFunction implements SuccessorFunction {
                     retVal.add(new Successor(S, newState));
                 }
             }
-        }
+        }*/
 
         // Operator 4
         for (int i = 0; i < BicingState.nvans; ++i) {
