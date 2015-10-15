@@ -27,13 +27,13 @@ public class BicingSuccessorFunction implements SuccessorFunction {
                 if (newState.swapOrig(i, j)) {    // Could not change the state
                     double v = HF.getHeuristicValue(newState);
                     String S = BicingState.ORIG_SWAP + " (" + i + "," + j + ") Cost(" + v + ")";
-                    //System.out.println(S);
+
                     retVal.add(new Successor(S, newState));
                 }
             }
         }
 
-        // Operator 2
+        // Operator 2 (change destinations)
         for (int i = 0; i < BicingState.nvans; ++i) {
             for (int j = 0; j < BicingState.stations.size(); ++j) {
                 if (currentState.getDest(i, BicingState.DEST1) != j) {
@@ -117,7 +117,7 @@ public class BicingSuccessorFunction implements SuccessorFunction {
             }
         }*/
 
-        // Operator 4
+        // Operator 4 (change the num of bikes)
         for (int i = 0; i < BicingState.nvans; ++i) {
             int n = Math.min(BicingState.MAX_BIKES_PER_VAN,currentState.getAvailableBikes(currentState.getOrig(i)));
             if (currentState.getDest(i,BicingState.DEST2) != BicingState.NO_STATION) {
@@ -131,6 +131,7 @@ public class BicingSuccessorFunction implements SuccessorFunction {
                         int bikesToDest2 = newState.getNumBikes(i,BicingState.DEST2);
                         double v = HF.getHeuristicValue(newState);
                         String S = "van " + i + " bikes to DEST1 (" + bikesToDest1 + ") bikes to DEST2 (" + bikesToDest2 + ")" + " Cost(" + v + ")";
+
                         retVal.add(new Successor(S, newState));
                     }
                 }
@@ -143,6 +144,7 @@ public class BicingSuccessorFunction implements SuccessorFunction {
                 int bikesToDest2 = newState.getNumBikes(i,BicingState.DEST2);
                 double v = HF.getHeuristicValue(newState);
                 String S = "van " + i + " bikes to DEST1 (" + bikesToDest1 + ") bikes to DEST2 (" + bikesToDest2 + ")" + " Cost(" + v + ")";
+
                 retVal.add(new Successor(S, newState));
             }
         }

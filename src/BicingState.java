@@ -1,8 +1,9 @@
 import IA.Bicing.Estaciones;
 import aima.search.framework.HeuristicFunction;
 import aima.search.framework.Successor;
+import javafx.util.Pair;
 
-import java.util.Random;
+import java.util.*;
 
 public class BicingState {
 
@@ -45,21 +46,53 @@ public class BicingState {
         stations = new Estaciones(nst, nbik, dem, seed);
         vans = new int[nvans][5];
         trivialSolution();
+        //complexSolution();
     }
 
     private final void trivialSolution() {
         for (int i = 0; i < nvans; ++i) {
             vans[i][ORIG] = i;
             vans[i][DEST1] = new Random().nextInt(stations.size());
-            vans[i][DEST2] = new Random().nextInt(stations.size());
-            vans[i][NBIKES1] = new Random().nextInt(Math.min(MAX_BIKES_PER_VAN, getAvailableBikes(vans[i][ORIG])+1));
-            int n = Math.min(MAX_BIKES_PER_VAN, getAvailableBikes(vans[i][ORIG])) - vans[i][NBIKES1];
-            vans[i][NBIKES2] = (n <= 0) ? 0 : new Random().nextInt(n);
+            do {
+                vans[i][DEST2] = new Random().nextInt(stations.size());
+            } while (vans[i][DEST2] == vans[i][DEST1]);
+
+            int n = Math.min(MAX_BIKES_PER_VAN, getAvailableBikes(vans[i][ORIG]));
+            vans[i][NBIKES1] = (n == 0) ? 0 : new Random().nextInt(n);
+            vans[i][NBIKES2] = n - vans[i][NBIKES1];
         }
     }
 
     private final void complexSolution() {
-        trivialSolution(); //TODO Shhhhhh... tu no has vist res...
+        ArrayList<Pair<Integer,Integer>> stationsByAvailableBikes = new ArrayList<>();
+        for (int i = 0; i < stations.size(); ++i) {
+            stationsByAvailableBikes.add(new Pair<>(i, getAvailableBikes(i)));
+        }
+        Collections.sort(stationsByAvailableBikes, new Comparator<Pair<Integer, Integer>>() {
+            @Override
+            public int compare(Pair<Integer, Integer> o1, Pair<Integer, Integer> o2) {
+                return o2.getValue() - o1.getValue();
+            }
+        });
+
+        ArrayList<Pair<Integer,Integer>> stationsByNeededBikes = new ArrayList<>();
+        for (int i = 0; i < stations.size(); ++i) {
+            stationsByNeededBikes.add(new Pair<>(i, Math.max(0,getDemand(i) - getNumBikesNext(i))));
+        }
+        Collections.sort(stationsByNeededBikes, new Comparator<Pair<Integer, Integer>>() {
+            @Override
+            public int compare(Pair<Integer, Integer> o1, Pair<Integer, Integer> o2) {
+                return o2.getValue() - o1.getValue();
+            }
+        });
+
+        for (int i = 0; i < nvans; ++i) {
+            vans[i][ORIG] = stationsByAvailableBikes.get(i).getKey();
+            vans[i][DEST1] = stationsByNeededBikes.get(i).getKey();
+            vans[i][DEST2] = stationsByNeededBikes.get((i+nvans)%stations.size()).getKey();
+            vans[i][NBIKES1] = Math.min(MAX_BIKES_PER_VAN, Math.min(stationsByAvailableBikes.get(i).getValue(), stationsByNeededBikes.get(i).getValue()));
+            vans[i][NBIKES2] = stationsByAvailableBikes.get(i).getValue() - vans[i][NBIKES1];
+        }
     }
 
     /**
@@ -164,6 +197,8 @@ public class BicingState {
      *
      * @param station1 the index of the first station
      * @param station2 the index of the second station
+     * @return         true if the swap was possible and thus has been made;
+     *                 false otherwise
      */
     public final boolean swapOrig(int station1, int station2) {
         int vanOnStation1, vanOnStation2;
@@ -280,7 +315,7 @@ public class BicingState {
         str += String.format("| station | original | demand | final | added | taken | %n");
         str += String.format("+---------+----------+--------+-------+-------+-------+ %n");
 
-        String leftAlignFormat = "| %7d | %8d | %6d | %5d | %5d | %5d |   Cost(%f)\t%s %n";
+        String leftAlignFormat = "| %7d | %8d | %6d | %5d | %5d | %5d |  Cost(%f)\t%s %n";
         for (int i = 0; i < stations.size(); ++i) {
             str += String.format(
                     leftAlignFormat,
@@ -296,14 +331,14 @@ public class BicingState {
         }
         str += String.format("+---------+----------+--------+-------+-------+-------+%n");
 
-        str += String.format("+----------------------------+ %n");
-        str += String.format("| %10s %-15s | %n", " ", "VANS");
+        str += String.format("+--------------------------------+ %n");
+        str += String.format("| %12s %-17s | %n", " ", "VANS");
 
-        str += String.format("+-----+------+----------+-----------+ %n");
-        str += String.format("| van | orig |   dest1  |   dest2   | %n");
-        str += String.format("+-----+------+----------+-----------+ %n");
+        str += String.format("+-----+------+---------+---------+ %n");
+        str += String.format("| van | orig |  dest1  |  dest2  | %n");
+        str += String.format("+-----+------+---------+---------+ %n");
 
-        leftAlignFormat = "| %3d | %4d | %5s\t| %5s   \t|    Cost(%f)  %n";
+        leftAlignFormat = "| %3d | %4d | %7s | %7s |  Cost(%f) %n";
         for (int i = 0; i < nvans; ++i) {
             str += String.format(
                     leftAlignFormat,
@@ -314,7 +349,7 @@ public class BicingState {
                     HF.getHeuristicValueForVanTravel(this, i)
             );
         }
-        str += String.format("+-----+------+----------+-----------+ %n");
+        str += String.format("+-----+------+---------+---------+ %n");
 
         return str;
     }
