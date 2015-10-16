@@ -208,13 +208,22 @@ public class BicingState {
             else if (getOrig(i) == station2) vanOnStation2 = i;
         }
 
-        if (vanOnStation1 != -1 && getTakenBikes(vanOnStation1) <= getAvailableBikes(station2)
-            && vanOnStation2 != -1 && getTakenBikes(vanOnStation2) <= getAvailableBikes(station1)) {
+        if(vanOnStation1 == -1 && vanOnStation2 == -1) return false;
+        else if(vanOnStation1 != -1 && vanOnStation2 == -1 && getTakenBikes(vanOnStation1) <= getAvailableBikes(station2))
+        {
+            vans[vanOnStation1][ORIG] = station2;
+        }
+        else if(vanOnStation2 != -1 && vanOnStation1 == -1 && getTakenBikes(vanOnStation2) <= getAvailableBikes(station1))
+        {
+            vans[vanOnStation2][ORIG] = station1;
+        }
+        else if( vanOnStation1 != -1 && vanOnStation2 != -1 && getTakenBikes(vanOnStation1) <= getAvailableBikes(station2) &&
+                getTakenBikes(vanOnStation2) <= getAvailableBikes(station1) )
+        {
             vans[vanOnStation1][ORIG] = station2;
             vans[vanOnStation2][ORIG] = station1;
-            return true;
         }
-        return false;
+        return true;
     }
 
     /**
