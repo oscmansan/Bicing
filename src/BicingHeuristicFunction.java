@@ -24,6 +24,19 @@ public class BicingHeuristicFunction implements HeuristicFunction {
             cost += Math.abs((predictedBikes + (addedBikes[i] - takenBikes[i])) - demandedBikes);
         }
 
+        // The Robin Hood vans, castigar a les que roben d'on sobren poques bicis, premiar a les que roben dels rics
+        double robinConst = 20.0;
+        for (int i = 0; i < BicingState.nvans; ++i)
+        {
+            int origin = currentState.getOrig(i);
+
+            //1.0 means more available bikes, 0.0 means less available bikes
+            float positionPercent = ((float) BicingState.stationsByAvailableBikesIndices[origin]) / BicingState.stations.size();
+
+            cost += (1.0 - positionPercent) * robinConst;
+        }
+
+
         // Vans travel cost
         double travelCost = 0.0;
         for (int i = 0; i < BicingState.nvans; ++i) {

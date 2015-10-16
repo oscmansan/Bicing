@@ -13,6 +13,18 @@ public class BicingState {
     public static final String DEST_CHANGE = "change destination";
     public static final String NBIKES_CHANGE = "change num of bikes";
 
+    //de més available a menys available
+    public static ArrayList<Pair<Integer,Integer>> stationsByAvailableBikes = new ArrayList<>();
+
+    //de més necessitades a menys necessitades
+    public static ArrayList<Pair<Integer,Integer>> stationsByNeededBikes = new ArrayList<>();
+
+    //la posicio i, te l'index de la estacio i a stationsByAvailableBikes
+    public static int[] stationsByAvailableBikesIndices;
+
+    //la posicio i, te l'index de la estacio i a  stationsByNeededBikes
+    public static int[] stationsByNeededBikesIndices;
+
     public static final int NO_STATION = -1;
     public static final int ORIG = 0;       // Origin station
     public static final int DEST1 = 1;      // Destination station (1)
@@ -45,8 +57,49 @@ public class BicingState {
         nvans = nv;
         stations = new Estaciones(nst, nbik, dem, seed);
         vans = new int[nvans][5];
+
+
+        stationsByAvailableBikesIndices = new int[stations.size()];
+        stationsByNeededBikesIndices = new int[stations.size()];
+
+        fillStationArrays();
+
         trivialSolution();
         //complexSolution();
+    }
+
+    private final void fillStationArrays()
+    {
+        for (int i = 0; i < stations.size(); ++i) {
+            stationsByAvailableBikes.add(new Pair<>(i, getAvailableBikes(i)));
+        }
+        Collections.sort(stationsByAvailableBikes, new Comparator<Pair<Integer, Integer>>() {
+            @Override
+            public int compare(Pair<Integer, Integer> o1, Pair<Integer, Integer> o2) {
+                return o2.getValue() - o1.getValue();
+            }
+        });
+
+        for (int i = 0; i < stations.size(); ++i) {
+            stationsByNeededBikes.add(new Pair<>(i, Math.max(0,getDemand(i) - getNumBikesNext(i))));
+        }
+        Collections.sort(stationsByNeededBikes, new Comparator<Pair<Integer, Integer>>() {
+            @Override
+            public int compare(Pair<Integer, Integer> o1, Pair<Integer, Integer> o2) {
+                return o2.getValue() - o1.getValue();
+            }
+        });
+
+        for(int j = 0; j < stationsByAvailableBikes.size(); ++j)
+        {
+            stationsByAvailableBikesIndices[stationsByAvailableBikes.get(j).getKey()] = j;
+        }
+
+        for(int j = 0; j < stationsByNeededBikes.size(); ++j)
+        {
+            stationsByNeededBikesIndices[stationsByNeededBikes.get(j).getKey()] = j;
+        }
+
     }
 
     private final void trivialSolution() {
@@ -63,29 +116,8 @@ public class BicingState {
         }
     }
 
-    private final void complexSolution() {
-        ArrayList<Pair<Integer,Integer>> stationsByAvailableBikes = new ArrayList<>();
-        for (int i = 0; i < stations.size(); ++i) {
-            stationsByAvailableBikes.add(new Pair<>(i, getAvailableBikes(i)));
-        }
-        Collections.sort(stationsByAvailableBikes, new Comparator<Pair<Integer, Integer>>() {
-            @Override
-            public int compare(Pair<Integer, Integer> o1, Pair<Integer, Integer> o2) {
-                return o2.getValue() - o1.getValue();
-            }
-        });
-
-        ArrayList<Pair<Integer,Integer>> stationsByNeededBikes = new ArrayList<>();
-        for (int i = 0; i < stations.size(); ++i) {
-            stationsByNeededBikes.add(new Pair<>(i, Math.max(0,getDemand(i) - getNumBikesNext(i))));
-        }
-        Collections.sort(stationsByNeededBikes, new Comparator<Pair<Integer, Integer>>() {
-            @Override
-            public int compare(Pair<Integer, Integer> o1, Pair<Integer, Integer> o2) {
-                return o2.getValue() - o1.getValue();
-            }
-        });
-
+    private final void complexSolution()
+    {
         for (int i = 0; i < nvans; ++i) {
             vans[i][ORIG] = stationsByAvailableBikes.get(i).getKey();
             vans[i][DEST1] = stationsByNeededBikes.get(i).getKey();
