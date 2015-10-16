@@ -6,10 +6,22 @@ public class BicingHeuristicFunction implements HeuristicFunction {
         BicingState currentState = (BicingState) o;
         double cost = 0;
 
-        // Bike transfers cost
-        // Get the imported bikes to every station
+        cost += bikeTransfersCost(currentState);
+        cost += robinHoodCost(currentState);
+        cost += vansTravelCost(currentState);
+
+        return cost;
+    }
+
+    /**
+     * Get the imported bikes to every station
+     * @param currentState
+     * @return
+     */
+    public double bikeTransfersCost(BicingState currentState) {
         int[] addedBikes = new int[BicingState.stations.size()];
         int[] takenBikes = new int[BicingState.stations.size()];
+        double cost = 0;
         for (int i = 0; i < BicingState.nvans; ++i) {
             addedBikes[currentState.getDest(i, BicingState.DEST1)] += currentState.getNumBikes(i, BicingState.DEST1);
             if (currentState.getDest(i, BicingState.DEST2) != BicingState.NO_STATION)
@@ -23,8 +35,16 @@ public class BicingHeuristicFunction implements HeuristicFunction {
 
             cost += Math.abs((predictedBikes + (addedBikes[i] - takenBikes[i])) - demandedBikes);
         }
+        return cost;
+    }
 
-        // The Robin Hood vans, castigar a les que roben d'on sobren poques bicis, premiar a les que roben dels rics
+    /**
+     * The Robin Hood vans, castigar a les que roben d'on sobren poques bicis, premiar a les que roben dels rics
+     * @param currentState
+     * @return
+     */
+    public double robinHoodCost(BicingState currentState) {
+        double cost = 0;
         double robinConst = 20.0;
         for (int i = 0; i < BicingState.nvans; ++i)
         {
@@ -33,29 +53,38 @@ public class BicingHeuristicFunction implements HeuristicFunction {
             //1.0 means more available bikes, 0.0 means less available bikes
             float positionPercent = ((float) BicingState.stationsByAvailableBikesIndices[origin]) / BicingState.stations.size();
 
-            cost += (1.0 - positionPercent) * robinConst;
+            cost -= (1.0 - positionPercent) * robinConst;
         }
 
+        return cost;
+    }
 
-        // Vans travel cost
-        double travelCost = 0.0;
+    /**
+     * Vans travel cost
+     * @param currentState
+     * @return
+     */
+    public double vansTravelCost(BicingState currentState) {
+        double cost = 0.0;
         for (int i = 0; i < BicingState.nvans; ++i) {
             int dest1 = currentState.getDest(i, BicingState.DEST1);
             int dest2 = currentState.getDest(i, BicingState.DEST2);
 
             int bikesUntilDest1 = currentState.getNumBikes(i, BicingState.DEST1) + currentState.getNumBikes(i, BicingState.DEST2);
             double distOrigDest1 = (double) BicingState.getDistance(currentState.getOrig(i), dest1);
-            travelCost += ((bikesUntilDest1 + 9) / 10) * (distOrigDest1 / 1000.0);
+            cost += ((bikesUntilDest1 + 9) / 10) * (distOrigDest1 / 1000.0);
 
             if (dest2 != BicingState.NO_STATION) {
                 int bikesUntilDest2 = currentState.getNumBikes(i, BicingState.DEST2);
                 double distDest1Dest2 = (double) BicingState.getDistance(dest1, dest2);
-                travelCost += ((bikesUntilDest2 + 9) / 10) * (distDest1Dest2 / 1000.0);
+                cost += ((bikesUntilDest2 + 9) / 10) * (distDest1Dest2 / 1000.0);
             }
         }
-        cost += travelCost;
-
         return cost;
+    }
+
+    public double getRealCost(BicingState currentState) {
+        return bikeTransfersCost(currentState) + vansTravelCost(currentState);
     }
 
     public double getHeuristicValueForStation(BicingState currentState, int station) {

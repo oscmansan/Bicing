@@ -331,6 +331,62 @@ public class BicingState {
         return Math.min(Math.max(0,getNumBikesNext(station) - getDemand(station)),getUselessBikes(station));
     }
 
+    public final int getMoney() {
+        int money = 0;
+
+        int[] addedBikes = new int[BicingState.stations.size()];
+        int[] takenBikes = new int[BicingState.stations.size()];
+
+        for (int i = 0; i < BicingState.nvans; ++i) {
+            addedBikes[getDest(i, BicingState.DEST1)] += getNumBikes(i, BicingState.DEST1);
+            if (getDest(i, BicingState.DEST2) != BicingState.NO_STATION)
+                addedBikes[getDest(i, BicingState.DEST2)] += getNumBikes(i, BicingState.DEST2);
+            takenBikes[getOrig(i)] += getTakenBikes(i);
+        }
+
+        for (int i = 0; i < stations.size(); ++i) {
+            int demand = getDemand(i);
+            int prevision = getNumBikesNext(i);
+            int result = prevision + addedBikes[i] - takenBikes[i];
+
+            money += Math.abs(demand - prevision) - Math.abs(demand - result);
+        }
+        
+        for (int i = 0; i < BicingState.nvans; ++i) {
+            int dest1 = getDest(i, BicingState.DEST1);
+            int dest2 = getDest(i, BicingState.DEST2);
+
+            int bikesUntilDest1 = getNumBikes(i, BicingState.DEST1) + getNumBikes(i, BicingState.DEST2);
+            double distOrigDest1 = (double) BicingState.getDistance(getOrig(i), dest1);
+            money -= ((bikesUntilDest1 + 9) / 10) * (distOrigDest1 / 1000.0);
+
+            if (dest2 != BicingState.NO_STATION) {
+                int bikesUntilDest2 = getNumBikes(i, BicingState.DEST2);
+                double distDest1Dest2 = (double) BicingState.getDistance(dest1, dest2);
+                money -= ((bikesUntilDest2 + 9) / 10) * (distDest1Dest2 / 1000.0);
+            }
+        }
+
+
+        return money;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public final double getTotalDistance() {
+        int dist = 0;
+
+        for (int i = 0; i < nvans; ++i) {
+            dist += getDistance(getOrig(i),getDest(i,DEST1));
+            if (getDest(i,DEST2) != NO_STATION)
+                dist += getDistance(getDest(i,DEST1),getDest(i,DEST2));
+        }
+
+        return (double)dist / 1000.0;
+    }
+
     public final String toString()
     {
         BicingHeuristicFunction HF = new BicingHeuristicFunction();
