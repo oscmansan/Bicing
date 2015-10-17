@@ -14,9 +14,8 @@ public class BicingHeuristicFunction implements HeuristicFunction {
     }
 
     /**
-     * Get the imported bikes to every station
-     * @param currentState
-     * @return
+     * Get the cost due to bike transfers
+     * @return  the cost due to bike transfers
      */
     public double bikeTransfersCost(BicingState currentState) {
         int[] addedBikes = new int[BicingState.stations.size()];
@@ -39,9 +38,9 @@ public class BicingHeuristicFunction implements HeuristicFunction {
     }
 
     /**
-     * The Robin Hood vans, castigar a les que roben d'on sobren poques bicis, premiar a les que roben dels rics
-     * @param currentState
-     * @return
+     * The Robin Hood vans; punish those who 'steal' from 'poorer' stations (with less available bikes) while reward
+     * those who 'steal' from 'richer' stations (with more available bikes)
+     * @return  the cost after reward vans that take bikes from stations where there are more of them available
      */
     public double robinHoodCost(BicingState currentState) {
         double cost = 0;
@@ -50,9 +49,8 @@ public class BicingHeuristicFunction implements HeuristicFunction {
         {
             int origin = currentState.getOrig(i);
 
-            //1.0 means more available bikes, 0.0 means less available bikes
-            float positionPercent = ((float) BicingState.stationsByAvailableBikesIndices[origin]) / BicingState.stations.size();
-
+            // 1.0 means more available bikes, 0.0 means less available bikes
+            float positionPercent = ((float)BicingState.stationsByAvailableBikesIndices[origin]) / ((float)BicingState.stations.size());
             cost -= (1.0 - positionPercent) * robinConst;
         }
 
@@ -60,9 +58,8 @@ public class BicingHeuristicFunction implements HeuristicFunction {
     }
 
     /**
-     * Vans travel cost
-     * @param currentState
-     * @return
+     * Get the cost due to vans travel
+     * @return  the cost due to vans travel
      */
     public double vansTravelCost(BicingState currentState) {
         double cost = 0.0;

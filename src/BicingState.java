@@ -13,16 +13,16 @@ public class BicingState {
     public static final String DEST_CHANGE = "change destination";
     public static final String NBIKES_CHANGE = "change num of bikes";
 
-    //de més available a menys available
-    public static ArrayList<Pair<Integer,Integer>> stationsByAvailableBikes = new ArrayList<>();
+    // Stations sorted by number of available bikes
+    public static ArrayList<Pair<Integer, Integer>> stationsByAvailableBikes = new ArrayList<>();
 
-    //de més necessitades a menys necessitades
-    public static ArrayList<Pair<Integer,Integer>> stationsByNeededBikes = new ArrayList<>();
+    // Stations sorted by number of needed bikes
+    public static ArrayList<Pair<Integer, Integer>> stationsByNeededBikes = new ArrayList<>();
 
-    //la posicio i, te l'index de la estacio i a stationsByAvailableBikes
+    // Position i contains the index of station i in stationsByAvailableBikes
     public static int[] stationsByAvailableBikesIndices;
 
-    //la posicio i, te l'index de la estacio i a  stationsByNeededBikes
+    // Position i contains the index of station i in stationsByNeededBikes
     public static int[] stationsByNeededBikesIndices;
 
     public static final int NO_STATION = -1;
@@ -47,29 +47,26 @@ public class BicingState {
     /**
      * Constructor with arguments and a starter solution
      *
-     * @param nst   num of stations
-     * @param nbik  num of bikes
-     * @param nv    num of vans
-     * @param dem   setting type (equilibrium/rush hour)
-     * @param seed  seed for the random generator
+     * @param nst  num of stations
+     * @param nbik num of bikes
+     * @param nv   num of vans
+     * @param dem  setting type (equilibrium/rush hour)
+     * @param seed seed for the random generator
      */
     public BicingState(int nst, int nbik, int nv, int dem, int seed) {
         nvans = nv;
         stations = new Estaciones(nst, nbik, dem, seed);
         vans = new int[nvans][5];
 
-
         stationsByAvailableBikesIndices = new int[stations.size()];
         stationsByNeededBikesIndices = new int[stations.size()];
-
         fillStationArrays();
 
         trivialSolution();
         //complexSolution();
     }
 
-    private final void fillStationArrays()
-    {
+    private final void fillStationArrays() {
         for (int i = 0; i < stations.size(); ++i) {
             stationsByAvailableBikes.add(new Pair<>(i, getAvailableBikes(i)));
         }
@@ -81,7 +78,7 @@ public class BicingState {
         });
 
         for (int i = 0; i < stations.size(); ++i) {
-            stationsByNeededBikes.add(new Pair<>(i, Math.max(0,getDemand(i) - getNumBikesNext(i))));
+            stationsByNeededBikes.add(new Pair<>(i, Math.max(0, getDemand(i) - getNumBikesNext(i))));
         }
         Collections.sort(stationsByNeededBikes, new Comparator<Pair<Integer, Integer>>() {
             @Override
@@ -90,13 +87,11 @@ public class BicingState {
             }
         });
 
-        for(int j = 0; j < stationsByAvailableBikes.size(); ++j)
-        {
+        for (int j = 0; j < stationsByAvailableBikes.size(); ++j) {
             stationsByAvailableBikesIndices[stationsByAvailableBikes.get(j).getKey()] = j;
         }
 
-        for(int j = 0; j < stationsByNeededBikes.size(); ++j)
-        {
+        for (int j = 0; j < stationsByNeededBikes.size(); ++j) {
             stationsByNeededBikesIndices[stationsByNeededBikes.get(j).getKey()] = j;
         }
 
@@ -116,12 +111,11 @@ public class BicingState {
         }
     }
 
-    private final void complexSolution()
-    {
+    private final void complexSolution() {
         for (int i = 0; i < nvans; ++i) {
             vans[i][ORIG] = stationsByAvailableBikes.get(i).getKey();
             vans[i][DEST1] = stationsByNeededBikes.get(i).getKey();
-            vans[i][DEST2] = stationsByNeededBikes.get((i+nvans)%stations.size()).getKey();
+            vans[i][DEST2] = stationsByNeededBikes.get((i + nvans) % stations.size()).getKey();
             vans[i][NBIKES1] = Math.min(MAX_BIKES_PER_VAN, Math.min(stationsByAvailableBikes.get(i).getValue(), stationsByNeededBikes.get(i).getValue()));
             vans[i][NBIKES2] = stationsByAvailableBikes.get(i).getValue() - vans[i][NBIKES1];
         }
@@ -151,7 +145,7 @@ public class BicingState {
      * Returns the origin of the van
      *
      * @param i the index of the van
-     * @return  the origin station
+     * @return the origin station
      */
     public final int getOrig(int i) {
         return vans[i][ORIG];
@@ -160,9 +154,9 @@ public class BicingState {
     /**
      * Returns the destination (first or second) of the van
      *
-     * @param i     the index of the van
-     * @param dest  indicates first or second destination
-     * @return      the destination station
+     * @param i    the index of the van
+     * @param dest indicates first or second destination
+     * @return the destination station
      */
     public final int getDest(int i, int dest) {
         return vans[i][dest];
@@ -171,9 +165,9 @@ public class BicingState {
     /**
      * Returns the number of bikes the van leaves at the destination
      *
-     * @param i     the index of the van
-     * @param dest  indicates first or second destination
-     * @return      the num of bikes the van leaves at the destination
+     * @param i    the index of the van
+     * @param dest indicates first or second destination
+     * @return the num of bikes the van leaves at the destination
      */
     public final int getNumBikes(int i, int dest) {
         return getDest(i, dest) == NO_STATION ? 0 : vans[i][dest + 1];
@@ -182,11 +176,11 @@ public class BicingState {
     /**
      * Returns the number of bikes the van takes from the origin
      *
-     * @param i     the index of the van
-     * @return      the numb of bikes the van takes from the origin
+     * @param i the index of the van
+     * @return the numb of bikes the van takes from the origin
      */
     public final int getTakenBikes(int i) {
-        return getNumBikes(i, DEST1) + getNumBikes(i,DEST2);
+        return getNumBikes(i, DEST1) + getNumBikes(i, DEST2);
     }
 
     /**
@@ -229,8 +223,8 @@ public class BicingState {
      *
      * @param station1 the index of the first station
      * @param station2 the index of the second station
-     * @return         true if the swap was possible and thus has been made;
-     *                 false otherwise
+     * @return true if the swap was possible and thus has been made;
+     * false otherwise
      */
     public final boolean swapOrig(int station1, int station2) {
         int vanOnStation1, vanOnStation2;
@@ -240,18 +234,15 @@ public class BicingState {
             else if (getOrig(i) == station2) vanOnStation2 = i;
         }
 
-        if(vanOnStation1 == -1 && vanOnStation2 == -1) return false;
-        else if(vanOnStation1 != -1 && vanOnStation2 == -1 && getTakenBikes(vanOnStation1) <= getAvailableBikes(station2))
-        {
+        if (vanOnStation1 == -1 && vanOnStation2 == -1) return false;
+        else if (vanOnStation1 != -1 && vanOnStation2 == -1 && getTakenBikes(vanOnStation1) <= getAvailableBikes(station2)) {
             vans[vanOnStation1][ORIG] = station2;
         }
-        else if(vanOnStation2 != -1 && vanOnStation1 == -1 && getTakenBikes(vanOnStation2) <= getAvailableBikes(station1))
-        {
+        else if (vanOnStation2 != -1 && vanOnStation1 == -1 && getTakenBikes(vanOnStation2) <= getAvailableBikes(station1)) {
             vans[vanOnStation2][ORIG] = station1;
         }
-        else if( vanOnStation1 != -1 && vanOnStation2 != -1 && getTakenBikes(vanOnStation1) <= getAvailableBikes(station2) &&
-                getTakenBikes(vanOnStation2) <= getAvailableBikes(station1) )
-        {
+        else if (vanOnStation1 != -1 && vanOnStation2 != -1 && getTakenBikes(vanOnStation1) <= getAvailableBikes(station2) &&
+                getTakenBikes(vanOnStation2) <= getAvailableBikes(station1)) {
             vans[vanOnStation1][ORIG] = station2;
             vans[vanOnStation2][ORIG] = station1;
         }
@@ -272,22 +263,20 @@ public class BicingState {
     /**
      * Adds 1 bike to the destination dest of the van i
      *
-     * @param i       the index of the van
-     * @param dest    indicates first or second destination
+     * @param i    the index of the van
+     * @param dest indicates first or second destination
      */
-    public final void addBike(int i, int dest)
-    {
+    public final void addBike(int i, int dest) {
         changeNumBikes(i, dest, getNumBikes(i, dest) + 1);
     }
 
     /**
      * Substracts 1 bike to the destination dest of the van i
      *
-     * @param i       the index of the van
-     * @param dest    indicates first or second destination
+     * @param i    the index of the van
+     * @param dest indicates first or second destination
      */
-    public final void substractBike(int i, int dest)
-    {
+    public final void substractBike(int i, int dest) {
         changeNumBikes(i, dest, getNumBikes(i, dest) - 1);
     }
 
@@ -323,14 +312,19 @@ public class BicingState {
 
     /**
      * Returns the maximum number of bikes the van can take from the station
-     * @param station   the index of the station
-     * @return          the maximum number of bikes the van can take from the station
+     *
+     * @param station the index of the station
+     * @return the maximum number of bikes the van can take from the station
      */
     public final int getAvailableBikes(int station) {
         // System.out.println("next: " + getNumBikesNext(station) + " demand: " + getDemand(station) + "  useless: " + getUselessBikes(station));
-        return Math.min(Math.max(0,getNumBikesNext(station) - getDemand(station)),getUselessBikes(station));
+        return Math.min(Math.max(0, getNumBikesNext(station) - getDemand(station)), getUselessBikes(station));
     }
 
+    /**
+     * Returns the total amount of money earned from bike transfers
+     * @return  the total amount of money earned from bike transfers
+     */
     public final int getMoney() {
         int money = 0;
 
@@ -351,7 +345,7 @@ public class BicingState {
 
             money += Math.abs(demand - prevision) - Math.abs(demand - result);
         }
-        
+
         for (int i = 0; i < BicingState.nvans; ++i) {
             int dest1 = getDest(i, BicingState.DEST1);
             int dest2 = getDest(i, BicingState.DEST2);
@@ -367,28 +361,26 @@ public class BicingState {
             }
         }
 
-
         return money;
     }
 
     /**
-     *
-     * @return
+     * Returns the total distance traveled by the vans
+     * @return  the total distance traveled by the vans in km
      */
     public final double getTotalDistance() {
         int dist = 0;
 
         for (int i = 0; i < nvans; ++i) {
-            dist += getDistance(getOrig(i),getDest(i,DEST1));
-            if (getDest(i,DEST2) != NO_STATION)
-                dist += getDistance(getDest(i,DEST1),getDest(i,DEST2));
+            dist += getDistance(getOrig(i), getDest(i, DEST1));
+            if (getDest(i, DEST2) != NO_STATION)
+                dist += getDistance(getDest(i, DEST1), getDest(i, DEST2));
         }
 
-        return (double)dist / 1000.0;
+        return (double) dist / 1000.0;
     }
 
-    public final String toString()
-    {
+    public final String toString() {
         BicingHeuristicFunction HF = new BicingHeuristicFunction();
 
         String str = "\n";
@@ -412,7 +404,7 @@ public class BicingState {
         str += String.format("| station | original | demand | final | added | taken | %n");
         str += String.format("+---------+----------+--------+-------+-------+-------+ %n");
 
-        String leftAlignFormat = "| %7d | %8d | %6d | %5d | %5d | %5d |  Cost(%f)\t%s %n";
+        String leftAlignFormat = "| %7d | %8d | %6d | %5d | %5d | %5d |  Cost(%f)%s %n";
         for (int i = 0; i < stations.size(); ++i) {
             str += String.format(
                     leftAlignFormat,
@@ -423,7 +415,7 @@ public class BicingState {
                     addedBikes[i],
                     takenBikes[i],
                     HF.getHeuristicValueForStation(this, i),
-                    (addedBikes[i] == 0 && takenBikes[i] == 0 ? "**UNTOUCHED STATION" : "")
+                    (addedBikes[i] == 0 && takenBikes[i] == 0 ? "  \t**UNTOUCHED STATION" : "")
             );
         }
         str += String.format("+---------+----------+--------+-------+-------+-------+%n");
