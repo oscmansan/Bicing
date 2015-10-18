@@ -10,6 +10,7 @@ public class BicingSuccessorFunctionSA implements SuccessorFunction {
     @Override
     public List getSuccessors(Object aState)
     {
+        boolean debugOp = false;
         BicingState currentState = (BicingState) aState;
 
         int E = BicingState.stations.size();
@@ -21,8 +22,8 @@ public class BicingSuccessorFunctionSA implements SuccessorFunction {
         for(int f = 0; f < BicingState.nvans; ++f)
         {
             int nBikes = Math.min(BicingState.MAX_BIKES_PER_VAN, currentState.getAvailableBikes(currentState.getOrig(f)));
-            if(currentState.getDest(BicingState.DEST2, f) != BicingState.NO_STATION) probOp4 += nBikes + 1;
-            else probOp4 += 1;
+            if(currentState.getDest(BicingState.DEST2, f) != BicingState.NO_STATION) probOp4 += nBikes;
+            probOp4 += 1;
         }
         int probOp3Or4 = Main.USE_OP_3 ? probOp3 : probOp4;
         int totalProbs = probOp1 + probOp2 + probOp3Or4;
@@ -38,14 +39,22 @@ public class BicingSuccessorFunctionSA implements SuccessorFunction {
                 break;
             }
         }
-
-        if (!found) p = new Random().nextInt(totalProbs - probOp3);
+        if (!found) p = new Random().nextInt(totalProbs);
 
         double vv = HF.getHeuristicValue(currentState);
         //System.out.println("Cost(" + vv + ") --->");
         //System.out.println(currentState.toString());
 
-        if (p < probOp1) {
+        if(debugOp) System.out.println("Prob op1: " + ((float)probOp1)/totalProbs);
+        if(debugOp) System.out.println("Prob op2: " + ((float)probOp2)/totalProbs);
+        if(debugOp) if(Main.USE_OP_3) System.out.println("Prob op3: "  + ((float)probOp3)/totalProbs);
+        else System.out.println("Prob op4: "  + ((float)probOp4)/totalProbs);
+        if(debugOp) System.out.println("p: " + ((float)p)/totalProbs);
+
+        if (p < probOp1)
+        {
+            if(debugOp) System.out.println("Using op1");
+
             int station1 = currentState.getOrig(new Random().nextInt(F));
             int station2 = station1;
             while (station1 == station2) station2 = new Random().nextInt(E);
@@ -59,7 +68,8 @@ public class BicingSuccessorFunctionSA implements SuccessorFunction {
             String S = BicingState.ORIG_SWAP + " (" + station1 + "," + station2 + ") Cost(" + v + ")";
             //System.out.println(S);
             retVal.add(new Successor(S, newState));
-        } else if (p < probOp2) {
+        } else if (p < probOp1 + probOp2) {
+            if(debugOp) System.out.println("Using op2");
             int van = new Random().nextInt(F);
             int station = new Random().nextInt(E);
             int dest = new Random().nextBoolean() ? BicingState.DEST1 : BicingState.DEST2;
@@ -78,6 +88,7 @@ public class BicingSuccessorFunctionSA implements SuccessorFunction {
         {
             if(Main.USE_OP_3)
             {
+                if(debugOp) System.out.println("Using op3");
                 // Operador 3
                 // Aqui canviem les bicis que portem als destins.
                 int dest = new Random().nextBoolean() ? BicingState.DEST1 : BicingState.DEST2;
@@ -126,6 +137,7 @@ public class BicingSuccessorFunctionSA implements SuccessorFunction {
             }
             else
             {
+                if(debugOp) System.out.println("Using op4");
                 //Operador 4
                 int van, nBikes;
                 do {
