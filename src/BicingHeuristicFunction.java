@@ -8,7 +8,7 @@ public class BicingHeuristicFunction implements HeuristicFunction {
 
         cost += bikeTransfersCost(currentState);
         cost += robinHoodCost(currentState);
-        cost += vansTravelCost(currentState);
+        if(!Main.FREE_TRANSPORT) cost += vansTravelCost(currentState);
 
         return cost;
     }

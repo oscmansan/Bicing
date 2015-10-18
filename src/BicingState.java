@@ -14,7 +14,7 @@ public class BicingState {
     public static final String NBIKES_CHANGE = "change num of bikes";
 
     // Stations sorted by number of available bikes
-    public static ArrayList<Pair<Integer, Integer>> stationsByAvailableBikes = new ArrayList<>();
+    public static ArrayList<Pair<Integer, Integer>> stationsByAvailableBikes;
 
     // Stations sorted by number of needed bikes
     public static ArrayList<Pair<Integer, Integer>> stationsByNeededBikes = new ArrayList<>();
@@ -58,12 +58,15 @@ public class BicingState {
         stations = new Estaciones(nst, nbik, dem, seed);
         vans = new int[nvans][5];
 
+        stationsByAvailableBikes = new ArrayList<>();
+        stationsByNeededBikes = new ArrayList<>();
+
         stationsByAvailableBikesIndices = new int[stations.size()];
         stationsByNeededBikesIndices = new int[stations.size()];
         fillStationArrays();
 
-        trivialSolution();
-        //complexSolution();
+        if(Main.USE_TRIVIAL_INITIAL_SOLUTION) trivialSolution();
+        else complexSolution();
     }
 
     private final void fillStationArrays() {
@@ -318,7 +321,7 @@ public class BicingState {
      */
     public final int getAvailableBikes(int station) {
         // System.out.println("next: " + getNumBikesNext(station) + " demand: " + getDemand(station) + "  useless: " + getUselessBikes(station));
-        return Math.min(Math.max(0, getNumBikesNext(station) - getDemand(station)), getUselessBikes(station));
+        return Math.min(MAX_BIKES_PER_VAN, Math.min( Math.max(0, getNumBikesNext(station) - getDemand(station)), getUselessBikes(station)));
     }
 
     /**
@@ -338,26 +341,35 @@ public class BicingState {
             takenBikes[getOrig(i)] += getTakenBikes(i);
         }
 
-        for (int i = 0; i < stations.size(); ++i) {
+        for (int i = 0; i < stations.size(); ++i)
+        {
             int demand = getDemand(i);
-            int prevision = getNumBikesNext(i);
-            int result = prevision + addedBikes[i] - takenBikes[i];
+            int next = getNumBikesNext(i);
+            int result = next + (addedBikes[i] - takenBikes[i]);
+            int realAdded = Math.max(0, addedBikes[i] - takenBikes[i]);
+            int realTaken = Math.max(0, takenBikes[i] - addedBikes[i]);
 
-            money += Math.abs(demand - prevision) - Math.abs(demand - result);
+            if(demand > next) money += Math.min( demand - next, realAdded );
+            if(result < demand) money -= Math.min( demand - result, realTaken );
+
+            //money += Math.abs(demand - next) - Math.abs(demand - result);
         }
 
-        for (int i = 0; i < BicingState.nvans; ++i) {
-            int dest1 = getDest(i, BicingState.DEST1);
-            int dest2 = getDest(i, BicingState.DEST2);
+        if(!Main.FREE_TRANSPORT)
+        {
+            for (int i = 0; i < BicingState.nvans; ++i) {
+                int dest1 = getDest(i, BicingState.DEST1);
+                int dest2 = getDest(i, BicingState.DEST2);
 
-            int bikesUntilDest1 = getNumBikes(i, BicingState.DEST1) + getNumBikes(i, BicingState.DEST2);
-            double distOrigDest1 = (double) BicingState.getDistance(getOrig(i), dest1);
-            money -= ((bikesUntilDest1 + 9) / 10) * (distOrigDest1 / 1000.0);
+                int bikesUntilDest1 = getNumBikes(i, BicingState.DEST1) + getNumBikes(i, BicingState.DEST2);
+                double distOrigDest1 = (double) BicingState.getDistance(getOrig(i), dest1);
+                money -= ((bikesUntilDest1 + 9) / 10) * (distOrigDest1 / 1000.0);
 
-            if (dest2 != BicingState.NO_STATION) {
-                int bikesUntilDest2 = getNumBikes(i, BicingState.DEST2);
-                double distDest1Dest2 = (double) BicingState.getDistance(dest1, dest2);
-                money -= ((bikesUntilDest2 + 9) / 10) * (distDest1Dest2 / 1000.0);
+                if (dest2 != BicingState.NO_STATION) {
+                    int bikesUntilDest2 = getNumBikes(i, BicingState.DEST2);
+                    double distDest1Dest2 = (double) BicingState.getDistance(dest1, dest2);
+                    money -= ((bikesUntilDest2 + 9) / 10) * (distDest1Dest2 / 1000.0);
+                }
             }
         }
 
@@ -400,16 +412,17 @@ public class BicingState {
         str += String.format("+-----------------------------------------------------+%n");
         str += String.format("| %21s %-29s | %n", " ", "STATIONS");
 
-        str += String.format("+---------+----------+--------+-------+-------+-------+ %n");
-        str += String.format("| station | original | demand | final | added | taken | %n");
-        str += String.format("+---------+----------+--------+-------+-------+-------+ %n");
+        str += String.format("+---------+----------+---------+--------+-------+-------+-------+ %n");
+        str += String.format("| station |   next   | useless | demand | final | added | taken | %n");
+        str += String.format("+---------+----------+---------+--------+-------+-------+-------+ %n");
 
-        String leftAlignFormat = "| %7d | %8d | %6d | %5d | %5d | %5d |  Cost(%f)%s %n";
+        String leftAlignFormat = "| %7d | %8d | %6d | %5d | %5d | %5d | %5d |  Cost(%f)%s %n";
         for (int i = 0; i < stations.size(); ++i) {
             str += String.format(
                     leftAlignFormat,
                     i,
                     getNumBikesNext(i),
+                    getUselessBikes(i),
                     getDemand(i),
                     (getNumBikesNext(i) + addedBikes[i] - takenBikes[i]),
                     addedBikes[i],
