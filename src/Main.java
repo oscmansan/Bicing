@@ -12,7 +12,7 @@ import java.util.Properties;
 
 public class Main
 {
-    private static final int nest = 25*7;
+    private static final int nest = 25*10;
     private final static int nbic = nest * 50;
     private final static int nf = nest / 5;
     private static final int dem = Estaciones.EQUILIBRIUM;
@@ -69,7 +69,7 @@ public class Main
            // System.out.print(rc + "\t");
             //System.out.print(finalState.getMoney() + "\t");
             //System.out.print(finalState.getTotalDistance() + "\t");
-            //System.out.print("Expanded nodes(" + search.getPathStates().size() + ")\t");
+            System.out.print("Expanded nodes(" + search.getPathStates().size() + ")\t");
 
             eurosAverage += ((float)finalState.getMoney()) / NUM_EXPERIMENTS;
 
@@ -105,7 +105,7 @@ public class Main
             System.out.print(finalState.getMoney() + "\t");
             System.out.print(finalState.getTotalDistance() + "\t");
             //System.out.println(finalState.toString());
-            //System.out.print("Expanded nodes(" + search.getPathStates().size() + ")\t");
+            System.out.print("Expanded nodes(" + search.getPathStates().size() + ")\t");
 
             eurosAverage += ((float)finalState.getMoney()) / NUM_EXPERIMENTS;
 
