@@ -22,7 +22,7 @@ public class BicingSuccessorFunctionSA implements SuccessorFunction {
         for(int f = 0; f < BicingState.nvans; ++f)
         {
             int nBikes = Math.min(BicingState.MAX_BIKES_PER_VAN, currentState.getAvailableBikes(currentState.getOrig(f)));
-            if(currentState.getDest(BicingState.DEST2, f) != BicingState.NO_STATION) probOp4 += nBikes;
+            if(currentState.getDest(f, BicingState.DEST2) != BicingState.NO_STATION) probOp4 += nBikes;
             probOp4 += 1;
         }
         int probOp3Or4 = Main.USE_OP_3 ? probOp3 : probOp4;

@@ -53,7 +53,8 @@ public class BicingState {
      * @param dem  setting type (equilibrium/rush hour)
      * @param seed seed for the random generator
      */
-    public BicingState(int nst, int nbik, int nv, int dem, int seed) {
+    public BicingState(int nst, int nbik, int nv, int dem, int seed)
+    {
         nvans = nv;
         stations = new Estaciones(nst, nbik, dem, seed);
         vans = new int[nvans][5];
