@@ -1,13 +1,17 @@
 import aima.search.framework.HeuristicFunction;
 
+import java.util.Random;
+
 public class BicingHeuristicFunction implements HeuristicFunction {
     @Override
-    public double getHeuristicValue(Object o) {
+    public double getHeuristicValue(Object o)
+    {
         BicingState currentState = (BicingState) o;
         double cost = 0;
 
         cost += bikeTransfersCost(currentState);
         cost += robinHoodCost(currentState);
+        //System.out.println(cost + " , " + vansTravelCost(currentState));
         if(!Main.FREE_TRANSPORT) cost += vansTravelCost(currentState);
 
         return cost;

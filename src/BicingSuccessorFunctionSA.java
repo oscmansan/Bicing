@@ -42,7 +42,7 @@ public class BicingSuccessorFunctionSA implements SuccessorFunction {
         if (!found) p = new Random().nextInt(totalProbs);
 
         double vv = HF.getHeuristicValue(currentState);
-        //System.out.println("Cost(" + vv + ") --->");
+       // System.out.print("Cost(" + vv + ") --> ");
         //System.out.println(currentState.toString());
 
         if(debugOp) System.out.println("Prob op1: " + ((float)probOp1)/totalProbs);
@@ -172,7 +172,7 @@ public class BicingSuccessorFunctionSA implements SuccessorFunction {
             }
             //System.out.println("########################################################\n");
         }
-
+        //System.out.println("Cost(" + HF.getHeuristicValue(retVal.get(0).getState()) + ")");
         return retVal;
     }
 

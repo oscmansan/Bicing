@@ -14,14 +14,15 @@ public class Main
 {
     private static final int nest = 25;
     private final static int nbic = 1250;
-    private final static int nf = 5;
-    private static final int dem = Estaciones.EQUILIBRIUM;
+    private final static int nf = 10;
+    private static final int dem = Estaciones.RUSH_HOUR;
     private static final int seed = 1234;
 
     public static boolean USE_OP_3                     = false;
     public static boolean USE_TRIVIAL_INITIAL_SOLUTION = false;
     public static boolean FREE_TRANSPORT               = false;
-    public static boolean USE_HILL_CLIMBING            = false;
+    public static boolean USE_HILL_CLIMBING            = true;
+
     private static final int NUM_EXPERIMENTS = 20;
 
     private static double eurosAverage = 0.0;
@@ -35,9 +36,11 @@ public class Main
             if(USE_HILL_CLIMBING) BicingHillClimbingSearch(BS);
             else BicingSimulatedAnnealingSearch(BS);
             //System.out.println("\ntime = " + (System.currentTimeMillis()-t0) + " ms");
+
             System.out.println((System.currentTimeMillis()-t0));
+            if(i == 4) System.out.println("================================");
         }
-        System.out.println("Euros average: " + eurosAverage);
+        System.out.println("Euros average: " + (eurosAverage / (double) NUM_EXPERIMENTS));
     }
 
     private static void BicingHillClimbingSearch(BicingState BS)
@@ -59,18 +62,12 @@ public class Main
             double rc = HF.getRealCost(finalState);
 
             System.out.print(vv + "\t");
-            //System.out.print(rc + "\t");
+            // System.out.print(rc + "\t");
             System.out.print(finalState.getMoney() + "\t");
             System.out.print(finalState.getTotalDistance() + "\t");
-            //System.out.println("########################################################\n");
+            //System.out.print("Expanded nodes(" + search.getPathStates().size()  + ")\t");
 
-            //System.out.print(vv + "\t");
-           // System.out.print(rc + "\t");
-            //System.out.print(finalState.getMoney() + "\t");
-            //System.out.print(finalState.getTotalDistance() + "\t");
-            System.out.print("Expanded nodes(" + search.getPathStates().size() + ")\t");
-
-            eurosAverage += ((float)finalState.getMoney()) / NUM_EXPERIMENTS;
+            eurosAverage += (double)finalState.getMoney();
 
             //printActions(agent.getActions());
             //System.out.println();
@@ -100,13 +97,13 @@ public class Main
             double rc = HF.getRealCost(finalState);
 
             System.out.print(vv + "\t");
-            System.out.print(rc + "\t");
+            //System.out.print(rc + "\t");
             System.out.print(finalState.getMoney() + "\t");
             System.out.print(finalState.getTotalDistance() + "\t");
             //System.out.println(finalState.toString());
-            System.out.print("Expanded nodes(" + search.getPathStates().size() + ")\t");
+            //System.out.print("Expanded nodes(" + search.getPathStates().size() + ")\t");
 
-            eurosAverage += ((float)finalState.getMoney()) / NUM_EXPERIMENTS;
+            eurosAverage += (double)finalState.getMoney();
 
         } catch (Exception e) {
             e.printStackTrace();
