@@ -12,16 +12,16 @@ import java.util.Properties;
 
 public class Main
 {
-    private static final int nest = 25*10;
-    private final static int nbic = nest * 50;
-    private final static int nf = nest / 5;
-    private static final int dem = Estaciones.EQUILIBRIUM;
+    private static final int nest = 25;
+    private final static int nbic = 1250;
+    private final static int nf = 5*4;
+    private static final int dem = Estaciones.RUSH_HOUR;
     private static final int seed = 1234;
 
     public static boolean USE_OP_3                     = false;
     public static boolean USE_TRIVIAL_INITIAL_SOLUTION = false;
     public static boolean FREE_TRANSPORT               = false;
-    public static boolean USE_HILL_CLIMBING            = false;
+    public static boolean USE_HILL_CLIMBING            = true;
     private static final int NUM_EXPERIMENTS = 20;
 
     private static double eurosAverage = 0.0;
@@ -58,18 +58,17 @@ public class Main
             double vv = HF.getHeuristicValue(finalState);
             double rc = HF.getRealCost(finalState);
 
-            //System.out.println("Heuristic(" + vv + ")");
-            //System.out.println("RealCost(" + rc + ")");
-            //System.out.println("Money(" + finalState.getMoney() + " EURUS)");
-            //System.out.println("Distance(" + finalState.getTotalDistance() + " km)");
-            //System.out.println(finalState.toString());
+            System.out.print(vv + "\t");
+            //System.out.print(rc + "\t");
+            System.out.print(finalState.getMoney() + "\t");
+            System.out.print(finalState.getTotalDistance() + "\t");
             //System.out.println("########################################################\n");
 
             //System.out.print(vv + "\t");
            // System.out.print(rc + "\t");
             //System.out.print(finalState.getMoney() + "\t");
             //System.out.print(finalState.getTotalDistance() + "\t");
-            System.out.print("Expanded nodes(" + search.getPathStates().size() + ")\t");
+            //System.out.print("Expanded nodes(" + search.getPathStates().size() + ")\t");
 
             eurosAverage += ((float)finalState.getMoney()) / NUM_EXPERIMENTS;
 
@@ -105,7 +104,7 @@ public class Main
             System.out.print(finalState.getMoney() + "\t");
             System.out.print(finalState.getTotalDistance() + "\t");
             //System.out.println(finalState.toString());
-            System.out.print("Expanded nodes(" + search.getPathStates().size() + ")\t");
+            //System.out.print("Expanded nodes(" + search.getPathStates().size() + ")\t");
 
             eurosAverage += ((float)finalState.getMoney()) / NUM_EXPERIMENTS;
 
