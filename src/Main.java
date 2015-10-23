@@ -19,9 +19,9 @@ public class Main
     private static final int seed = 1234;
 
     public static boolean USE_OP_3                     = false;
-    public static boolean USE_TRIVIAL_INITIAL_SOLUTION = true;
+    public static boolean USE_TRIVIAL_INITIAL_SOLUTION = false;
     public static boolean FREE_TRANSPORT               = false;
-    public static boolean USE_HILL_CLIMBING            = true;
+    public static boolean USE_HILL_CLIMBING            = false;
     private static final int NUM_EXPERIMENTS = 20;
 
     private static double eurosAverage = 0.0;
@@ -85,7 +85,7 @@ public class Main
 
         try {
             Problem problem =  new Problem(BS,new BicingSuccessorFunctionSA(), new ProbTSPGoalTest(), new BicingHeuristicFunction());
-            Search search =  new SimulatedAnnealingSearch(10000, 100, 5, 0.001);
+            Search search =  new SimulatedAnnealingSearch(100000, 1000, 100, 0.001);
             SearchAgent agent = new SearchAgent(problem,search);
             //printActions(agent.getActions());
             //System.out.println();
