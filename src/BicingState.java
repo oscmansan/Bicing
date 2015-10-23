@@ -118,8 +118,10 @@ public class BicingState {
     private final void complexSolution() {
         for (int i = 0; i < nvans; ++i) {
             vans[i][ORIG] = stationsByAvailableBikes.get(i).getKey();
-            vans[i][DEST1] = stationsByNeededBikes.get(i).getKey();
-            vans[i][DEST2] = stationsByNeededBikes.get((i + nvans) % stations.size()).getKey();
+            vans[i][DEST1] = i != vans[i][ORIG] ? i : ((i+1)%stations.size());
+            vans[i][DEST2] = ((i+1) != vans[i][ORIG] && (i+1) != vans[i][DEST1]) ? (i+1) : ((i+2)%stations.size());
+            //vans[i][DEST1] = stationsByNeededBikes.get(i).getKey();
+            //vans[i][DEST2] = stationsByNeededBikes.get((i + nvans) % stations.size()).getKey();
             vans[i][NBIKES1] = Math.min(MAX_BIKES_PER_VAN, Math.min(stationsByAvailableBikes.get(i).getValue(), stationsByNeededBikes.get(i).getValue()));
             vans[i][NBIKES2] = stationsByAvailableBikes.get(i).getValue() - vans[i][NBIKES1];
         }

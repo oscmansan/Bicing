@@ -14,12 +14,12 @@ public class Main
 {
     private static final int nest = 25;
     private final static int nbic = 1250;
-    private final static int nf = 5*4;
-    private static final int dem = Estaciones.RUSH_HOUR;
+    private final static int nf = 5;
+    private static final int dem = Estaciones.EQUILIBRIUM;
     private static final int seed = 1234;
 
     public static boolean USE_OP_3                     = false;
-    public static boolean USE_TRIVIAL_INITIAL_SOLUTION = false;
+    public static boolean USE_TRIVIAL_INITIAL_SOLUTION = true;
     public static boolean FREE_TRANSPORT               = false;
     public static boolean USE_HILL_CLIMBING            = true;
     private static final int NUM_EXPERIMENTS = 20;
@@ -68,7 +68,7 @@ public class Main
            // System.out.print(rc + "\t");
             //System.out.print(finalState.getMoney() + "\t");
             //System.out.print(finalState.getTotalDistance() + "\t");
-            //System.out.print("Expanded nodes(" + search.getPathStates().size() + ")\t");
+            System.out.print("Expanded nodes(" + search.getPathStates().size() + ")\t");
 
             eurosAverage += ((float)finalState.getMoney()) / NUM_EXPERIMENTS;
 
@@ -85,7 +85,7 @@ public class Main
 
         try {
             Problem problem =  new Problem(BS,new BicingSuccessorFunctionSA(), new ProbTSPGoalTest(), new BicingHeuristicFunction());
-            Search search =  new SimulatedAnnealingSearch(1500, 100, 5, 0.0001);
+            Search search =  new SimulatedAnnealingSearch(10000, 100, 5, 0.001);
             SearchAgent agent = new SearchAgent(problem,search);
             //printActions(agent.getActions());
             //System.out.println();
@@ -104,7 +104,7 @@ public class Main
             System.out.print(finalState.getMoney() + "\t");
             System.out.print(finalState.getTotalDistance() + "\t");
             //System.out.println(finalState.toString());
-            //System.out.print("Expanded nodes(" + search.getPathStates().size() + ")\t");
+            System.out.print("Expanded nodes(" + search.getPathStates().size() + ")\t");
 
             eurosAverage += ((float)finalState.getMoney()) / NUM_EXPERIMENTS;
 

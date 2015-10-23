@@ -172,6 +172,7 @@ public class BicingSuccessorFunctionSA implements SuccessorFunction {
             }
             //System.out.println("########################################################\n");
         }
+
         return retVal;
     }
 
