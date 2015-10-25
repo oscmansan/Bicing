@@ -6,74 +6,181 @@ import aima.search.framework.SearchAgent;
 import aima.search.informed.HillClimbingSearch;
 import aima.search.informed.SimulatedAnnealingSearch;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
-public class Main
-{
-    private static final int nest = 25;
-    private final static int nbic = 1250;
-    private final static int nf = 10;
-    private static final int dem = Estaciones.RUSH_HOUR;
-    private static final int seed = 1234;
+public class Main {
+    private static int nest = 25;
+    private static int nbic = 1250;
+    private static int nf = 20;
+    private static int dem = Estaciones.EQUILIBRIUM;
+    private static int seed = 1234;
 
-    public static boolean USE_OP_3                     = false;
+    private static int saIter = 100000;
+    private static int saStIter = 1000;
+    private static int saK = 100000;
+    private static double saLambda = 0.001;
+
+
+    public static boolean USE_OP_3 = false;
     public static boolean USE_TRIVIAL_INITIAL_SOLUTION = false;
-    public static boolean FREE_TRANSPORT               = false;
-    public static boolean USE_HILL_CLIMBING            = true;
+    public static boolean FREE_TRANSPORT = false;
+    public static boolean USE_HILL_CLIMBING = true;
 
-    private static final int NUM_EXPERIMENTS = 20;
+    private static int NUM_EXPERIMENTS = 10;
 
     private static double eurosAverage = 0.0;
 
-    public static void main(String args[])
-    {
-        for(int i = 0; i < NUM_EXPERIMENTS; ++i)
-        {
-            double t0 = System.currentTimeMillis();
-            BicingState BS = new BicingState(nest, nbic, nf, dem, seed);
-            if(USE_HILL_CLIMBING) BicingHillClimbingSearch(BS);
-            else BicingSimulatedAnnealingSearch(BS);
-            //System.out.println("\ntime = " + (System.currentTimeMillis()-t0) + " ms");
+    private static String results;
 
-            System.out.println((System.currentTimeMillis()-t0));
-            if(i == 4) System.out.println("================================");
+    public static void main(String args[]) {
+
+        int i = 0;
+        String arg;
+        while (i < args.length) {
+            arg = args[i++];
+            if (arg.startsWith("-")) {
+                switch (arg.substring(1)) {
+                    case "nest":
+                        nest = Integer.parseInt(args[i++]);
+                        break;
+                    case "nbic":
+                        nbic = Integer.parseInt(args[i++]);
+                        break;
+                    case "nf":
+                        nf = Integer.parseInt(args[i++]);
+                        break;
+                    case "dem":
+                        String a = args[i++];
+                        if (a.equals("E")) dem = Estaciones.EQUILIBRIUM;
+                        else if (a.equals("R")) dem = Estaciones.RUSH_HOUR;
+                        else usage();
+                        break;
+                    case "seed":
+                        seed = Integer.parseInt(args[i++]);
+                        break;
+                    case "nexp":
+                        NUM_EXPERIMENTS = Integer.parseInt(args[i++]);
+                        break;
+                    case "op3":
+                        USE_OP_3 = true;
+                        break;
+                    case "trivial":
+                        USE_TRIVIAL_INITIAL_SOLUTION = true;
+                        break;
+                    case "gratis":
+                        FREE_TRANSPORT = true;
+                        break;
+                    case "alg":
+                        String alg = args[i++];
+                        if (alg.equals("hc")) USE_HILL_CLIMBING = true;
+                        else if (alg.equals("sa")) {
+                            USE_HILL_CLIMBING = false;
+                            if (i < args.length && !args[i + 1].startsWith("-") && args[i + 1].matches("^-?\\d+$")) {
+                                saIter = Integer.parseInt(args[i++]);
+                                saStIter = Integer.parseInt(args[i++]);
+                                saK = Integer.parseInt(args[i++]);
+                                saLambda = Double.parseDouble(args[i++]);
+                            }
+                        } else usage();
+                        break;
+                    default:
+                        usage(arg);
+                        break;
+                }
+            } else {
+                usage(arg);
+            }
         }
-        System.out.println("Euros average: " + (eurosAverage / (double) NUM_EXPERIMENTS));
+
+        System.out.println("+---------------------------------------------------------+");
+        System.out.println("|                   Experimento Bicing                    |");
+        System.out.println("+---------------------------------------------------------+");
+
+        System.out.println("  Situacion:");
+        System.out.println("\tnest: \t\t" + nest);
+        System.out.println("\tnbic: \t\t" + nbic);
+        System.out.println("\tnf: \t\t" + nf);
+        System.out.println("\tdem: \t\t" + (dem == Estaciones.EQUILIBRIUM ? "equilibrium" : "rush hour"));
+        System.out.println("\tseed: \t\t" + seed);
+        System.out.println();
+
+        System.out.println("  Algoritmo: \t\t\t" + (USE_HILL_CLIMBING ? "Hill Climbing" : "Simulated Annealing"));
+        if (!USE_HILL_CLIMBING) {
+            System.out.println("\titer:  \t\t" + saIter);
+            System.out.println("\tstiter:\t\t" + saStIter);
+            System.out.println("\tk:     \t\t" + saK);
+            System.out.println("\tlambda:\t\t" + saLambda);
+            System.out.println();
+
+        }
+        System.out.println("  Usando operador 3: \t\t" + (USE_OP_3 ? "si" : "no"));
+        System.out.println("  Transporte gratis: \t\t" + (FREE_TRANSPORT ? "si" : "no"));
+        System.out.println("  Solucion trivial: \t\t" + (USE_TRIVIAL_INITIAL_SOLUTION ? "si" : "no"));
+        System.out.println("+---------------------------------------------------------+");
+        System.out.println();
+        System.out.println();
+        results = "";
+
+        for (i = 0; i < NUM_EXPERIMENTS; ++i)
+
+        {
+
+            BicingState BS = new BicingState(nest, nbic, nf, dem, seed);
+            if (USE_HILL_CLIMBING) BicingHillClimbingSearch(BS);
+            else BicingSimulatedAnnealingSearch(BS);
+
+
+        }
+
+        System.out.println("+---------------------------------------------------------+");
+        System.out.println("|                       Resultados                        |");
+        System.out.println("+------------+-----------+-----------+------------+-------+");
+        System.out.println("| heuristico | ganancias | distancia |   tiempo   | nodos |");
+        System.out.println("+------------+-----------+-----------+------------+-------+");
+
+        System.out.print(results);
+
+        System.out.println("+---------------------------------------------------------+");
+        System.out.println();
+
+
+        System.out.println("Media final: " + (eurosAverage / (double) NUM_EXPERIMENTS));
     }
 
-    private static void BicingHillClimbingSearch(BicingState BS)
-    {
-        //System.out.println("\nBicing HillClimbing  -->");
+    private static void usage(String arg) {
+        System.out.println("No se reconoce el parametro \"" + arg + "\".");
+        usage();
+    }
+
+    private static void usage() {
+        System.out.println("usage");
+        System.exit(-1);
+    }
+
+    private static void BicingHillClimbingSearch(BicingState BS) {
         try {
+            double t0 = System.currentTimeMillis();
+
             Problem problem = new Problem(BS, new BicingSuccessorFunction(), new ProbTSPGoalTest(), new BicingHeuristicFunction());
             Search search = new HillClimbingSearch();
-            //System.out.println();
+
             SearchAgent agent = new SearchAgent(problem, search);
 
             BicingState finalState;
-            if (search.getPathStates().size() > 0) finalState = (BicingState) search.getPathStates().get(search.getPathStates().size() - 1);
+            if (search.getPathStates().size() > 0)
+                finalState = (BicingState) search.getPathStates().get(search.getPathStates().size() - 1);
             else finalState = BS;
 
-            //System.out.println("FINAL STATE");
             BicingHeuristicFunction HF = new BicingHeuristicFunction();
             double vv = HF.getHeuristicValue(finalState);
             double rc = HF.getRealCost(finalState);
 
-            System.out.print(vv + "\t");
-            // System.out.print(rc + "\t");
-            System.out.print(finalState.getMoney() + "\t");
-            System.out.print(finalState.getTotalDistance() + "\t");
-            //System.out.print("Expanded nodes(" + search.getPathStates().size()  + ")\t");
+            String leftAlignFormat = "| %10.3f | %9d | %9.1f | %10.1f | %5d | %n";
+            results += String.format(leftAlignFormat, vv, finalState.getMoney(), finalState.getTotalDistance(), System.currentTimeMillis() - t0, search.getPathStates().size());
 
-            eurosAverage += (double)finalState.getMoney();
+            eurosAverage += (double) finalState.getMoney();
 
-            //printActions(agent.getActions());
-            //System.out.println();
-            //printInstrumentation(agent.getInstrumentation());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -81,29 +188,26 @@ public class Main
     private static void BicingSimulatedAnnealingSearch(BicingState BS) {
 
         try {
-            Problem problem =  new Problem(BS,new BicingSuccessorFunctionSA(), new ProbTSPGoalTest(), new BicingHeuristicFunction());
-            Search search =  new SimulatedAnnealingSearch(100000, 1000, 100, 0.001);
-            SearchAgent agent = new SearchAgent(problem,search);
-            //printActions(agent.getActions());
-            //System.out.println();
-            //printInstrumentation(agent.getInstrumentation());
+            double t0 = System.currentTimeMillis();
+
+            Problem problem = new Problem(BS, new BicingSuccessorFunctionSA(), new ProbTSPGoalTest(), new BicingHeuristicFunction());
+            Search search = new SimulatedAnnealingSearch(saIter, saStIter, saK, saLambda);
+            SearchAgent agent = new SearchAgent(problem, search);
 
             BicingState finalState;
-            if (search.getPathStates().size() > 0) finalState = (BicingState) search.getPathStates().get(search.getPathStates().size() - 1);
+            if (search.getPathStates().size() > 0)
+                finalState = (BicingState) search.getPathStates().get(search.getPathStates().size() - 1);
             else finalState = BS;
 
             BicingHeuristicFunction HF = new BicingHeuristicFunction();
             double vv = HF.getHeuristicValue(finalState);
             double rc = HF.getRealCost(finalState);
 
-            System.out.print(vv + "\t");
-            //System.out.print(rc + "\t");
-            System.out.print(finalState.getMoney() + "\t");
-            System.out.print(finalState.getTotalDistance() + "\t");
-            //System.out.println(finalState.toString());
-            //System.out.print("Expanded nodes(" + search.getPathStates().size() + ")\t");
 
-            eurosAverage += (double)finalState.getMoney();
+            String leftAlignFormat = "| %10.3f | %9d | %9.1f | %10.1f | %5d | %n";
+            results += String.format(leftAlignFormat, vv, finalState.getMoney(), finalState.getTotalDistance(), System.currentTimeMillis() - t0, search.getPathStates().size());
+
+            eurosAverage += (double) finalState.getMoney();
 
         } catch (Exception e) {
             e.printStackTrace();
