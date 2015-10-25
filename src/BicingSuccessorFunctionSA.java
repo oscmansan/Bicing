@@ -41,10 +41,6 @@ public class BicingSuccessorFunctionSA implements SuccessorFunction {
         }
         if (!found) p = new Random().nextInt(totalProbs);
 
-        double vv = HF.getHeuristicValue(currentState);
-       // System.out.print("Cost(" + vv + ") --> ");
-        //System.out.println(currentState.toString());
-
         if(debugOp) System.out.println("Prob op1: " + ((float)probOp1)/totalProbs);
         if(debugOp) System.out.println("Prob op2: " + ((float)probOp2)/totalProbs);
         if(debugOp) if(Main.USE_OP_3) System.out.println("Prob op3: "  + ((float)probOp3)/totalProbs);
@@ -60,13 +56,11 @@ public class BicingSuccessorFunctionSA implements SuccessorFunction {
             while (station1 == station2) station2 = new Random().nextInt(E);
 
             // Operador 1
-
             BicingState newState = currentState.copy();
             newState.swapOrig(station1, station2);
 
             double v = HF.getHeuristicValue(newState);
             String S = BicingState.ORIG_SWAP + " (" + station1 + "," + station2 + ") Cost(" + v + ")";
-            //System.out.println(S);
             retVal.add(new Successor(S, newState));
         } else if (p < probOp1 + probOp2) {
             if(debugOp) System.out.println("Using op2");
@@ -82,7 +76,6 @@ public class BicingSuccessorFunctionSA implements SuccessorFunction {
 
             double v = HF.getHeuristicValue(newState);
             String S = BicingState.DEST_CHANGE + " van(" + van + ") dest1(" + station + ") Cost(" + v + ")";
-            //System.out.println(S);
             retVal.add(new Successor(S, newState));
         } else
         {
@@ -116,7 +109,6 @@ public class BicingSuccessorFunctionSA implements SuccessorFunction {
 
                             double v = HF.getHeuristicValue(newState);
                             String S = "Added 1 bike to DEST1 of van " + van + "(" + (bikesToDest + 1) + ")" + " Cost(" + v + ")";
-                            //System.out.println(S);
                             retVal.add(new Successor(S, newState));
                         }
                     }
@@ -129,7 +121,6 @@ public class BicingSuccessorFunctionSA implements SuccessorFunction {
 
                             double v = HF.getHeuristicValue(newState);
                             String S = "Substracted 1 bike to DEST1 of van " + van + "(" + (bikesToDest - 1) + ")" + " Cost(" + v + ")";
-                            //System.out.println(S);
                             retVal.add(new Successor(S, newState));
                         }
                     }
@@ -137,7 +128,6 @@ public class BicingSuccessorFunctionSA implements SuccessorFunction {
             }
             else
             {
-                if(debugOp) System.out.println("Using op4");
                 //Operador 4
                 int van, nBikes;
                 do {
@@ -170,9 +160,7 @@ public class BicingSuccessorFunctionSA implements SuccessorFunction {
                     retVal.add(new Successor(S, newState));
                 }
             }
-            //System.out.println("########################################################\n");
         }
-        //System.out.println("Cost(" + HF.getHeuristicValue(retVal.get(0).getState()) + ")");
         return retVal;
     }
 

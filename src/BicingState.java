@@ -120,8 +120,6 @@ public class BicingState {
             vans[i][ORIG] = stationsByAvailableBikes.get(i).getKey();
             vans[i][DEST1] = i != vans[i][ORIG] ? i : ((i + 1) % stations.size());
             vans[i][DEST2] = ((i + 1) != vans[i][ORIG] && (i + 1) != vans[i][DEST1]) ? ((i + 1) % stations.size()) : ((i + 2) % stations.size());
-            //vans[i][DEST1] = stationsByNeededBikes.get(i).getKey();
-            //vans[i][DEST2] = stationsByNeededBikes.get((i + nvans) % stations.size()).getKey();
             vans[i][NBIKES1] = Math.min(MAX_BIKES_PER_VAN, Math.min(stationsByAvailableBikes.get(i).getValue(), stationsByNeededBikes.get(i).getValue()));
             vans[i][NBIKES2] = stationsByAvailableBikes.get(i).getValue() - vans[i][NBIKES1];
         }
@@ -323,7 +321,6 @@ public class BicingState {
      * @return the maximum number of bikes the van can take from the station
      */
     public final int getAvailableBikes(int station) {
-        // System.out.println("next: " + getNumBikesNext(station) + " demand: " + getDemand(station) + "  useless: " + getUselessBikes(station));
         return Math.min(MAX_BIKES_PER_VAN, Math.min( Math.max(0, getNumBikesNext(station) - getDemand(station)), getUselessBikes(station)));
     }
 
@@ -354,8 +351,6 @@ public class BicingState {
 
             if(demand > next) money += Math.min( demand - next, realAdded );
             if(result < demand) money -= Math.min( demand - result, realTaken );
-
-            //money += Math.abs(demand - next) - Math.abs(demand - result);
         }
 
         if(!Main.FREE_TRANSPORT)

@@ -41,13 +41,25 @@ public class Main {
             if (arg.startsWith("-")) {
                 switch (arg.substring(1)) {
                     case "nest":
-                        nest = Integer.parseInt(args[i++]);
+                        if (isNumber(args[i])) nest = Integer.parseInt(args[i++]);
+                        else  {
+                            System.out.println("\"" + args[i] + "\" is not a number, after \"" + arg + "\"");
+                            usage();
+                        }
                         break;
                     case "nbic":
-                        nbic = Integer.parseInt(args[i++]);
+                        if (isNumber(args[i])) nbic = Integer.parseInt(args[i++]);
+                        else  {
+                            System.out.println("\"" + args[i] + "\" is not a number, after \"" + arg + "\"");
+                            usage();
+                        }
                         break;
                     case "nf":
-                        nf = Integer.parseInt(args[i++]);
+                        if (isNumber(args[i])) nf = Integer.parseInt(args[i++]);
+                        else  {
+                            System.out.println("\"" + args[i] + "\" is not a number, after \"" + arg + "\"");
+                            usage();
+                        }
                         break;
                     case "dem":
                         String a = args[i++];
@@ -56,10 +68,18 @@ public class Main {
                         else usage();
                         break;
                     case "seed":
-                        seed = Integer.parseInt(args[i++]);
+                        if (isNumber(args[i])) seed = Integer.parseInt(args[i++]);
+                        else  {
+                            System.out.println("\"" + args[i] + "\" is not a number, after \"" + arg + "\"");
+                            usage();
+                        }
                         break;
                     case "nexp":
-                        NUM_EXPERIMENTS = Integer.parseInt(args[i++]);
+                        if (isNumber(args[i])) NUM_EXPERIMENTS = Integer.parseInt(args[i++]);
+                        else  {
+                            System.out.println("\"" + args[i] + "\" is not a number, after \"" + arg + "\"");
+                            usage();
+                        }
                         break;
                     case "op3":
                         USE_OP_3 = true;
@@ -75,7 +95,7 @@ public class Main {
                         if (alg.equals("hc")) USE_HILL_CLIMBING = true;
                         else if (alg.equals("sa")) {
                             USE_HILL_CLIMBING = false;
-                            if (i < args.length && !args[i + 1].startsWith("-") && args[i + 1].matches("^-?\\d+$")) {
+                            if (i < args.length && !args[i + 1].startsWith("-") && isNumber(args[i + 1])) {
                                 saIter = Integer.parseInt(args[i++]);
                                 saStIter = Integer.parseInt(args[i++]);
                                 saK = Integer.parseInt(args[i++]);
@@ -173,7 +193,6 @@ public class Main {
 
             BicingHeuristicFunction HF = new BicingHeuristicFunction();
             double vv = HF.getHeuristicValue(finalState);
-            double rc = HF.getRealCost(finalState);
 
             String leftAlignFormat = "| %10.3f | %9d | %9.1f | %10.1f | %5d | %n";
             results += String.format(leftAlignFormat, vv, finalState.getMoney(), finalState.getTotalDistance(), System.currentTimeMillis() - t0, search.getPathStates().size());
@@ -201,8 +220,6 @@ public class Main {
 
             BicingHeuristicFunction HF = new BicingHeuristicFunction();
             double vv = HF.getHeuristicValue(finalState);
-            double rc = HF.getRealCost(finalState);
-
 
             String leftAlignFormat = "| %10.3f | %9d | %9.1f | %10.1f | %5d | %n";
             results += String.format(leftAlignFormat, vv, finalState.getMoney(), finalState.getTotalDistance(), System.currentTimeMillis() - t0, search.getPathStates().size());
@@ -214,21 +231,11 @@ public class Main {
         }
     }
 
-    private static void printInstrumentation(Properties properties) {
-        Iterator keys = properties.keySet().iterator();
-        while (keys.hasNext()) {
-            String key = (String) keys.next();
-            String property = properties.getProperty(key);
-            System.out.println(key + " : " + property);
-        }
-
+    private static boolean isNumber(String str) {
+        return str.matches("^-?\\d+$");
     }
 
-    private static void printActions(List actions) {
-        for (int i = 0; i < actions.size(); i++) {
-            String action = (String) actions.get(i);
-            System.out.println(action);
-        }
-    }
+
+
 
 }

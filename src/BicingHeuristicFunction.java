@@ -11,7 +11,6 @@ public class BicingHeuristicFunction implements HeuristicFunction {
 
         cost += bikeTransfersCost(currentState);
         cost += robinHoodCost(currentState);
-        //System.out.println(cost + " , " + vansTravelCost(currentState));
         if(!Main.FREE_TRANSPORT) cost += vansTravelCost(currentState);
 
         return cost;

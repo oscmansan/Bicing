@@ -14,15 +14,6 @@ public class BicingSuccessorFunction implements SuccessorFunction {
 
         BicingState currentState = (BicingState) aState;
 
-        double vv = HF.getHeuristicValue(currentState);
-        double rc = HF.getRealCost(currentState);
-        //System.out.println("Heuristic(" + vv + ")");
-        //System.out.println("RealCost(" + rc + ")");
-        //System.out.println("Money(" + currentState.getMoney() + " EURUS)");
-        //System.out.println("Distance(" + currentState.getTotalDistance() + " km)");
-        //System.out.println(currentState.toString());
-        //System.out.println("########################################################\n");
-
         // Operator 1 (swap origins)
         for (int i = 0; i < BicingState.stations.size(); ++i) {
             for (int j = 0; j < BicingState.stations.size(); ++j) {
