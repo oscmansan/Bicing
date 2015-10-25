@@ -173,7 +173,31 @@ public class Main {
     }
 
     private static void usage() {
-        System.out.println("usage");
+        System.out.println(
+                "Possibles parametros:\n" +
+                "\n" +
+                "  \"-nest n\"  -> el problema tiene n estaciones (n = 25 por defecto)\n" +
+                "  \"-nbic n\"  -> el problema tiene n bicicletas (n = 1250 por defecto)\n" +
+                "  \"-nf n\"    -> el problema tiene n furgonetas (n = 20 por defecto)\n" +
+                "  \"-seed n\"  -> se usa n como semilla (n = 1234 por defecto)\n" +
+                "\n" +
+                "  \"-dem E\"   -> se usa una demanda equilibrada (valor por defecto)\n" +
+                "  \"-dem R\"   -> se usa una demanda de hora punta\n" +
+                "\n" +
+                "  \"-nexp n\"  -> indica el numero de experimentos a realizar (n = 10 por defecto)\n" +
+                "  \"-op3\"     -> se usa el operador 3 (el operador 4 se usa por defecto)\n" +
+                "  \"-trivial\" -> se usa la solucion inicial trivial (se usa la compleja por defecto)\n" +
+                "  \"-gratis\"  -> no se tiene en cuenta el coste del transporte ni en el heuristico ni el las ganancias finales (por defecto se tiene en cuenta)\n" +
+                "\n" +
+                "  \"-alg hc\"  -> se usa el algoritmo de Hill Climbing (valor por defecto)\n" +
+                "  \"-alg sa\"  -> se usa el algoritmo de Simulated Annealing con sus parametros por defecto (iteraciones = 100000, stiter = 1000, k = 100000, lambda = 0.01)\n" +
+                "  \"-alg sa iteraciones stiter k lambda\" -> se usa el algoritmo de Simulated Annealing con los parametros que se indican\n" +
+                "\n" +
+                "  Ejemplos:\n" +
+                "\n" +
+                "  > java -jar Bicing.jar -nest 27 -nexp 10 -trivial -seed 0 -alg sa 1000 100 5 0.001 -op3\n" +
+                "  > java -jar Bicing.jar -alg hc -dem R -nf 40 -nest 45 -nbic 700\n" +
+                "  > java -jar Bicing.jar -alg sa");
         System.exit(-1);
     }
 
