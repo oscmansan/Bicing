@@ -112,11 +112,11 @@ public class Main {
             }
         }
 
-        System.out.println("+---------------------------------------------------------+");
-        System.out.println("|                   Experimento Bicing                    |");
-        System.out.println("+---------------------------------------------------------+");
+        System.out.println("+-------------------------------------------------------------------------+");
+        System.out.println("|                           Experimento Bicing                            |");
+        System.out.println("+-------------------------------------------------------------------------+");
 
-        System.out.println("  Situacion:");
+        System.out.println("  Escenario:");
         System.out.println("\tnest: \t\t" + nest);
         System.out.println("\tnbic: \t\t" + nbic);
         System.out.println("\tnf: \t\t" + nf);
@@ -136,7 +136,7 @@ public class Main {
         System.out.println("  Usando operador 3: \t\t" + (USE_OP_3 ? "si" : "no"));
         System.out.println("  Transporte gratis: \t\t" + (FREE_TRANSPORT ? "si" : "no"));
         System.out.println("  Solucion trivial: \t\t" + (USE_TRIVIAL_INITIAL_SOLUTION ? "si" : "no"));
-        System.out.println("+---------------------------------------------------------+");
+        System.out.println("+-------------------------------------------------------------------------+");
         System.out.println();
         System.out.println();
         results = "";
@@ -152,19 +152,19 @@ public class Main {
 
         }
 
-        System.out.println("+---------------------------------------------------------+");
-        System.out.println("|                       Resultados                        |");
-        System.out.println("+------------+-----------+-----------+------------+-------+");
-        System.out.println("| heuristico | ganancias | distancia |   tiempo   | nodos |");
-        System.out.println("+------------+-----------+-----------+------------+-------+");
+        System.out.println("+-------------------------------------------------------------------------+");
+        System.out.println("|                               Resultados                                |");
+        System.out.println("+------------+-----------------+----------------+-----------------+-------+");
+        System.out.println("| heuristico | beneficio (eur) | distancia (km) |   tiempo (ms)   | nodos |");
+        System.out.println("+------------+-----------------+----------------+-----------------+-------+");
 
         System.out.print(results);
 
-        System.out.println("+---------------------------------------------------------+");
+        System.out.println("+-------------------------------------------------------------------------+");
         System.out.println();
 
 
-        System.out.println("Media final: " + (eurosAverage / (double) NUM_EXPERIMENTS));
+        System.out.println("Media final: " + (eurosAverage / (double) NUM_EXPERIMENTS) + " eur");
     }
 
     private static void usage(String arg) {
@@ -218,7 +218,7 @@ public class Main {
             BicingHeuristicFunction HF = new BicingHeuristicFunction();
             double vv = HF.getHeuristicValue(finalState);
 
-            String leftAlignFormat = "| %10.3f | %9d | %9.1f | %10.1f | %5d | %n";
+            String leftAlignFormat = "| %10.3f | %15d | %14.1f | %15.1f | %5d | %n";
             results += String.format(leftAlignFormat, vv, finalState.getMoney(), finalState.getTotalDistance(), System.currentTimeMillis() - t0, search.getPathStates().size());
 
             eurosAverage += (double) finalState.getMoney();
@@ -245,7 +245,7 @@ public class Main {
             BicingHeuristicFunction HF = new BicingHeuristicFunction();
             double vv = HF.getHeuristicValue(finalState);
 
-            String leftAlignFormat = "| %10.3f | %9d | %9.1f | %10.1f | %5d | %n";
+            String leftAlignFormat = "| %10.3f | %15d | %14.1f | %15.1f | %5d | %n";
             results += String.format(leftAlignFormat, vv, finalState.getMoney(), finalState.getTotalDistance(), System.currentTimeMillis() - t0, search.getPathStates().size());
 
             eurosAverage += (double) finalState.getMoney();
